@@ -33,7 +33,27 @@ router.post('/register', async (req, res) => {
 
 
 
-router.post('/login', (req, res) => res.json({ message: 'login pendiente' }));
+
+router.post('/login', async (req, res) => {
+  const { email, password } = req.body;
+
+  if (!email || !password) {
+    return res.status(400).json({ status: 'fail', message: 'Email y contraseña son obligatorios' });
+  }
+
+  const user = users.find(u => u.email === email);
+
+  const coincide = user && await bcrypt.compare(password, user.password);
+
+  if (!coincide) {
+    return res.status(401).json({ status: 'fail', message: 'Credenciales inválidas' });
+  }
+
+  req.session.userId = user.id;
+
+  res.json({ status: 'success', message: 'Login exitoso' });
+});
+
 
 
 router.post('/logout', (req, res) => res.json({ message: 'logout pendiente' }));
