@@ -1,7 +1,7 @@
 # Proyecto : VectorLab
 
 # Descripción de la aplicación web
-Nuestra aplicación web será una plataforma educativa basada en inteligencia artificial que ayudará a estudiantes de secundaria a prepararse para el ingreso a la universidad mediante la resolución y explicación detallada de ejercicios de física preuniversitaria.
+Nuestra aplicación web será una plataforma educativa basada en inteligencia artificial que ayudará a estudiantes de secundaria a prepararse para el ingreso a la universidad mediante la resolución y explicación detallada del área de ciencias matemáticas(física, geometría, trigonometría, etc.) preuniversitaria.
 
 El objetivo principal no será simplemente proporcionar respuestas correctas, sino enseñar al estudiante a comprender los conceptos físicos, interpretar los enunciados y aprender a resolver problemas por su cuenta.
 
@@ -16,7 +16,7 @@ El objetivo principal no será simplemente proporcionar respuestas correctas, si
 | :--- | :--- |
 | Repositorio | https://github.com/Alt-Anthony/VectorLab.git |
 | **Informes**[^1] | |
-|lab07 |https://github.com/rescobedoq/enrollments/blob/main/informes/IDWeb_lab07_avance_proyecto.pdf|
+|lab07 |https://drive.google.com/file/d/1qutqSLW_S-WKBHDUYBBYiWIqUYEYsgig/view?usp=sharing|
 
 
 
