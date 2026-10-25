@@ -1,0 +1,172 @@
+:root {
+  --fondo: #0f0b1a;
+  --superficie: #1a1330;
+  --borde: #2d2350;
+  --acento: #7c3aed;
+  --acento-hover: #6d28d9;
+  --texto: #e5e7eb;
+  --texto-suave: #a1a1b5;
+  --exito: #4ade80;
+  --error: #f87171;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Arial, Helvetica, sans-serif;
+  background: var(--fondo);
+  color: var(--texto);
+  line-height: 1.5;
+}
+
+/* ---------- Menú ---------- */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 32px;
+  background: var(--superficie);
+  border-bottom: 1px solid var(--borde);
+}
+
+.navbar .marca {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: white;
+  text-decoration: none;
+}
+
+.navbar .marca span { color: var(--acento); }
+
+.navbar nav a {
+  color: var(--texto-suave);
+  text-decoration: none;
+  margin-left: 24px;
+  padding-bottom: 4px;
+  border-bottom: 2px solid transparent;
+}
+
+.navbar nav a:hover,
+.navbar nav a.activo {
+  color: white;
+  border-bottom-color: var(--acento);
+}
+
+/* ---------- Inicio ---------- */
+.hero {
+  text-align: center;
+  padding: 90px 20px 60px;
+}
+
+.hero h1 {
+  font-size: 44px;
+  margin: 0 0 14px;
+  color: white;
+}
+
+.hero p {
+  max-width: 640px;
+  margin: 0 auto 30px;
+  color: var(--texto-suave);
+  font-size: 18px;
+}
+
+.boton-link {
+  display: inline-block;
+  padding: 12px 26px;
+  background: var(--acento);
+  color: white;
+  text-decoration: none;
+  border-radius: 6px;
+  font-weight: 600;
+}
+
+.boton-link:hover { background: var(--acento-hover); }
+
+/* ---------- Contenedor y tarjetas ---------- */
+.container {
+  width: 95%;
+  max-width: 1100px;
+  margin: 30px auto;
+}
+
+.card {
+  background: var(--superficie);
+  border: 1px solid var(--borde);
+  padding: 25px;
+  margin-bottom: 25px;
+  border-radius: 10px;
+}
+
+.card h2 { margin-top: 0; color: white; }
+
+/* ---------- Formulario ---------- */
+.form-group { margin-bottom: 18px; }
+
+label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 600;
+  color: var(--texto-suave);
+}
+
+input {
+  width: 100%;
+  padding: 10px;
+  background: var(--fondo);
+  color: var(--texto);
+  border: 1px solid var(--borde);
+  border-radius: 6px;
+  font-size: 15px;
+}
+
+input:focus {
+  outline: none;
+  border-color: var(--acento);
+}
+
+button {
+  padding: 9px 14px;
+  border: none;
+  border-radius: 6px;
+  background: var(--acento);
+  color: white;
+  cursor: pointer;
+  margin-right: 5px;
+}
+
+button:hover { background: var(--acento-hover); }
+button.secondary { background: #3b3358; }
+button.secondary:hover { background: #4a4170; }
+button.danger { background: #b91c1c; }
+button.danger:hover { background: #991b1b; }
+
+/* ---------- Tabla ---------- */
+.table-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.table-container { overflow-x: auto; }
+
+table { width: 100%; border-collapse: collapse; }
+
+th, td {
+  padding: 12px;
+  border-bottom: 1px solid var(--borde);
+  text-align: left;
+}
+
+th {
+  background: #231a42;
+  color: white;
+}
+
+/* ---------- Mensajes ---------- */
+#message { margin-top: 15px; font-weight: 600; }
+.success { color: var(--exito); }
+.error { color: var(--error); }

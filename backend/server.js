@@ -19,6 +19,9 @@ app.use(session({
 // API
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/perfil', require('./routes/perfil'));
+/// Agregando mas rutas
+app.use('/api/estudiantes', require('./routes/estudiantes'));
+
 
 // Frontend: /priv 
 const frontendPath = path.join(__dirname, '../frontend');
@@ -28,3 +31,4 @@ app.use(express.static(frontendPath));
 app.listen(PORT, () => {
   console.log(`Servidor en http://localhost:${PORT}`);
 });
+
