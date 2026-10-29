@@ -1,123 +1,42 @@
-const db = require('../db');
+const { obtenerUsuarioPorId, actualizarEstudiantePorId } = require('../data/users');
 
-// GET /api/estudiantes  -> listar todos
-exports.getEstudiantes = async (req, res) => {
+// Ver únicamente el perfil propio
+exports.obtenerMiPerfil = async (req, res) => {
   try {
-    const result = await db.query('SELECT * FROM estudiantes ORDER BY id', []);
-    res.status(200).json({ status: 'success', data: result.rows });
+    const usuario = await obtenerUsuarioPorId(req.session.usuario.id);
+    if (!usuario) {
+      return res.status(404).json({ status: 'fail', message: 'Usuario no encontrado' });
+    }
+    res.status(200).json({ status: 'success', data: usuario });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ status: 'fail', message: 'Error al obtener estudiantes' });
+    res.status(500).json({ status: 'fail', message: 'Error al obtener el perfil' });
   }
 };
 
-// GET /api/estudiantes/:id  -> obtener uno
-exports.getEstudianteById = async (req, res) => {
+// Editar únicamente el perfil propio
+exports.actualizarMiPerfil = async (req, res) => {
   try {
-    const { id } = req.params;
-    if (!Number.isInteger(Number(id))) {
-      return res.status(400).json({ status: 'fail', message: 'El id debe ser un número' });
-    }
-    const result = await db.query('SELECT * FROM estudiantes WHERE id = $1', [id]);
-    if (result.rows.length === 0) {
-      return res.status(404).json({ status: 'fail', message: 'Estudiante no encontrado' });
-    }
-    res.status(200).json({ status: 'success', data: result.rows[0] });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ status: 'fail', message: 'Error al obtener estudiante' });
-  }
-};
+    const { nombre, carrera } = req.body;
+    const userId = req.session.usuario.id;
 
-// POST /api/estudiantes  -> crear
-exports.createEstudiante = async (req, res) => {
-  try {
-    const { nombre, email, carrera_postula } = req.body;
-    if (!nombre || !email || !carrera_postula) {
-      return res.status(400).json({
-        status: 'fail',
-        message: 'Nombre, email y carrera a la que postula son obligatorios'
-      });
+    if (!carrera?.trim()) {
+      return res.status(400).json({ status: 'fail', message: 'La carrera es obligatoria' });
     }
-    const result = await db.query(
-      `INSERT INTO estudiantes (nombre, email, carrera_postula)
-       VALUES ($1, $2, $3)
-       RETURNING *`,
-      [nombre, email, carrera_postula]
-    );
-    res.status(201).json({
-      status: 'success',
-      message: 'Estudiante creado correctamente',
-      data: result.rows[0]
-    });
-  } catch (error) {
-    console.error(error);
-    if (error.code === '23505') {
-      return res.status(409).json({ status: 'fail', message: 'El email ya está registrado' });
-    }
-    res.status(500).json({ status: 'fail', message: 'Error al crear estudiante' });
-  }
-};
 
-// PUT /api/estudiantes/:id  -> actualizar
-exports.updateEstudiante = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { nombre, email, carrera_postula } = req.body;
-    if (!Number.isInteger(Number(id))) {
-      return res.status(400).json({ status: 'fail', message: 'El id debe ser un número' });
-    }
-    if (!nombre || !email || !carrera_postula) {
-      return res.status(400).json({
-        status: 'fail',
-        message: 'Nombre, email y carrera a la que postula son obligatorios'
-      });
-    }
-    const result = await db.query(
-      `UPDATE estudiantes
-       SET nombre = $1, email = $2, carrera_postula = $3
-       WHERE id = $4
-       RETURNING *`,
-      [nombre, email, carrera_postula, id]
-    );
-    if (result.rows.length === 0) {
-      return res.status(404).json({ status: 'fail', message: 'Estudiante no encontrado' });
-    }
+    const usuarioActualizado = await actualizarEstudiantePorId(userId, nombre, carrera);
+
+    // Actualizamos la sesión
+    req.session.usuario.nombre = usuarioActualizado.nombre;
+    req.session.usuario.carrera = usuarioActualizado.carrera;
+
     res.status(200).json({
       status: 'success',
-      message: 'Estudiante actualizado correctamente',
-      data: result.rows[0]
+      message: 'Perfil actualizado correctamente',
+      data: usuarioActualizado
     });
   } catch (error) {
     console.error(error);
-    if (error.code === '23505') {
-      return res.status(409).json({ status: 'fail', message: 'El email ya está registrado' });
-    }
-    res.status(500).json({ status: 'fail', message: 'Error al actualizar estudiante' });
-  }
-};
-
-// DELETE /api/estudiantes/:id  -> eliminar
-exports.deleteEstudiante = async (req, res) => {
-  try {
-    const { id } = req.params;
-    if (!Number.isInteger(Number(id))) {
-      return res.status(400).json({ status: 'fail', message: 'El id debe ser un número' });
-    }
-    const result = await db.query(
-      'DELETE FROM estudiantes WHERE id = $1 RETURNING *',
-      [id]
-    );
-    if (result.rows.length === 0) {
-      return res.status(404).json({ status: 'fail', message: 'Estudiante no encontrado' });
-    }
-    res.status(200).json({
-      status: 'success',
-      message: 'Estudiante eliminado correctamente',
-      data: result.rows[0]
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ status: 'fail', message: 'Error al eliminar estudiante' });
+    res.status(500).json({ status: 'fail', message: 'Error al actualizar el perfil' });
   }
 };

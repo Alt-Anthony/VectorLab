@@ -1,37 +1,38 @@
 const bcrypt = require('bcrypt');
 const { buscarPorEmail, crearEstudiante } = require('../data/users');
 
-const registrarEstudiante = async (req, res) => {
+exports.registrarEstudiante = async (req, res) => {
     const { nombre, carrera, email, password } = req.body;
 
     if (!carrera?.trim()) {
-        return res.status(400).json({ mensaje: 'La carrera es obligatoria.' });
+        return res.status(400).json({ status: 'fail', message: 'La carrera es obligatoria' });
     }
 
     try {
         const passwordHash = await bcrypt.hash(password, 10);
-        req.session.usuario = await crearEstudiante(nombre, carrera, email, passwordHash);
+        const nuevoEstudiante = await crearEstudiante(nombre, carrera, email, passwordHash);
 
-        res.status(201).json({ mensaje: 'Registro exitoso', usuario: req.session.usuario });
+        req.session.usuario = nuevoEstudiante;
+        res.status(201).json({ status: 'success', message: 'Registro exitoso', data: nuevoEstudiante });
     } catch (error) {
         if (error.code === '23505') {
-            return res.status(400).json({ mensaje: 'El correo electrónico ya está registrado.' });
+            return res.status(409).json({ status: 'fail', message: 'El correo electrónico ya está registrado' });
         }
-        res.status(500).json({ mensaje: 'Error al registrar', error: error.message });
+        res.status(500).json({ status: 'fail', message: 'Error al registrar estudiante' });
     }
 };
 
-const login = async (req, res) => {
+exports.login = async (req, res) => {
     const { email, password } = req.body;
 
     try {
         const usuario = await buscarPorEmail(email);
         if (!usuario) {
-            return res.status(404).json({ mensaje: 'Usuario no encontrado.' });
+            return res.status(404).json({ status: 'fail', message: 'Usuario no encontrado' });
         }
 
         if (!(await bcrypt.compare(password, usuario.password_hash))) {
-            return res.status(401).json({ mensaje: 'Contraseña incorrecta.' });
+            return res.status(401).json({ status: 'fail', message: 'Contraseña incorrecta' });
         }
 
         req.session.usuario = {
@@ -42,17 +43,15 @@ const login = async (req, res) => {
             rol: usuario.rol
         };
 
-        res.json({ mensaje: 'Inicio de sesión exitoso', usuario: req.session.usuario });
+        res.status(200).json({ status: 'success', message: 'Inicio de sesión exitoso', data: req.session.usuario });
     } catch (error) {
-        res.status(500).json({ mensaje: 'Error al iniciar sesión', error: error.message });
+        res.status(500).json({ status: 'fail', message: 'Error al iniciar sesión' });
     }
 };
 
-const logout = (req, res) => {
+exports.logout = (req, res) => {
     req.session.destroy((err) => {
-        if (err) return res.status(500).json({ mensaje: 'Error al cerrar sesión.' });
-        res.clearCookie('connect.sid').json({ mensaje: 'Sesión cerrada correctamente.' });
+        if (err) return res.status(500).json({ status: 'fail', message: 'Error al cerrar sesión' });
+        res.clearCookie('connect.sid').status(200).json({ status: 'success', message: 'Sesión cerrada correctamente' });
     });
 };
-
-module.exports = { registrarEstudiante, login, logout };
