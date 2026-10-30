@@ -20,20 +20,20 @@ VALUES
         'Anthony',
         'Administrador',
         'anthony@vectorlab.com',
-        '$2b$10$13/O8.0SvhHl1e/Y9bZ82eH203zE2P49oJ1LwW.a4d3x9m.qP/sS2',
+        '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',
         'admin'
     ),
     (
         'Mark',
         'Administrador',
         'mark@vectorlab.com',
-        '$2b$10$13/O8.0SvhHl1e/Y9bZ82eH203zE2P49oJ1LwW.a4d3x9m.qP/sS2',
+        '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',
         'admin'
     ),
     (
         'Maria',
         'Administrador',
         'maria@vectorlab.com',
-        '$2b$10$13/O8.0SvhHl1e/Y9bZ82eH203zE2P49oJ1LwW.a4d3x9m.qP/sS2',
+        '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',
         'admin'
     );

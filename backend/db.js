@@ -7,5 +7,12 @@ const pool = new Pool({
   password: process.env.DB_PASSWORD,
   port: process.env.DB_PORT
 });
+pool.query('SELECT NOW()', (err, res) => {
+  if (err) {
+    console.error('❌ ERROR AL CONECTAR CON POSTGRESQL:', err.message);
+  } else {
+    console.log('✅ Base de datos conectada correctamente a las:', res.rows[0].now);
+  }
+});
 
 module.exports = pool;

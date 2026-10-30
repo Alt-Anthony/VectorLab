@@ -30,7 +30,7 @@ app.use('/api', (req, res) => {
 
 // Frontend: /priv 
 const frontendPath = path.join(__dirname, '../frontend');
-app.use('/priv', verificarSesion, express.static(path.join(frontendPath, 'priv/pages')));
+app.use('/priv', verificarSesion, express.static(path.join(frontendPath, 'priv')));
 
 // Frontend: /pub
 app.use('/pub', express.static(path.join(frontendPath, 'pub')));

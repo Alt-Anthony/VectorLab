@@ -43,12 +43,17 @@ exports.login = async (req, res) => {
             rol: usuario.rol
         };
 
-        res.status(200).json({ status: 'success', message: 'Inicio de sesión exitoso', data: req.session.usuario });
+        return res.status(200).json({ status: 'success', message: 'Inicio de sesión exitoso', data: req.session.usuario });
     } catch (error) {
-        res.status(500).json({ status: 'fail', message: 'Error al iniciar sesión' });
+        // Imprime el error real tanto en la terminal como en la respuesta HTTP
+        console.error('>>> EXCEPCIÓN DETECTADA:', error);
+        return res.status(500).json({
+            status: 'fail',
+            message: 'Error interno en el servidor',
+            error_real: error.message
+        });
     }
 };
-
 exports.logout = (req, res) => {
     req.session.destroy((err) => {
         if (err) return res.status(500).json({ status: 'fail', message: 'Error al cerrar sesión' });

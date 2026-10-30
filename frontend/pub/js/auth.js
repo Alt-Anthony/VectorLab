@@ -11,7 +11,7 @@ async function iniciarSesion(email, password) {
 
         if (res.ok) {
             // Si el login es exitoso, redirige a la vista protegida
-            window.location.href = '../../priv/pages/dashboard.html';
+            window.location.href = '/priv/pages/dashboard.html';
         } else {
             alert(data.message || 'Error al iniciar sesión');
         }
@@ -32,8 +32,9 @@ async function registrarEstudiante(nombre, carrera, email, password) {
         const data = await res.json();
 
         if (res.ok) {
+            console.log("Completo")
             alert('Registro exitoso. Bienvenido!');
-            window.location.href = '../../priv/pages/dashboard.html';
+            window.location.href = '/priv/pages/dashboard.html';
         } else {
             alert(data.message || 'Error al registrarse');
         }
@@ -54,10 +55,10 @@ function procesarLogin(event) {
 function procesarRegistro(event) {
     if (event) event.preventDefault();
 
-    const nombre = document.getElementById('nombre').value.trim();
-    const carrera = document.getElementById('carrera').value.trim();
-    const email = document.getElementById('email').value.trim();
-    const password = document.getElementById('password').value.trim();
+    const nombre = document.getElementById('regNombre').value.trim();
+    const carrera = document.getElementById('regCarrera').value.trim();
+    const email = document.getElementById('regEmail').value.trim();
+    const password = document.getElementById('regPassword').value.trim();
 
     registrarEstudiante(nombre, carrera, email, password);
 }
