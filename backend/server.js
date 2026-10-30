@@ -30,9 +30,17 @@ app.use('/api', (req, res) => {
 
 // Frontend: /priv 
 const frontendPath = path.join(__dirname, '../frontend');
-app.use('/priv', verificarSesion, express.static(path.join(frontendPath, 'priv')));
-app.use(express.static(frontendPath));
+app.use('/priv', verificarSesion, express.static(path.join(frontendPath, 'priv/pages')));
 
+// Frontend: /pub
+app.use('/pub', express.static(path.join(frontendPath, 'pub')));
+app.use('/css', express.static(path.join(frontendPath, 'pub/css')));
+app.use('/js', express.static(path.join(frontendPath, 'pub/js')));
+app.use(express.static(path.join(frontendPath, 'pub/pages')));
+
+app.get('/', (req, res) => {
+  res.redirect('/index.html');
+});
 app.listen(PORT, () => {
   console.log(`Servidor en http://localhost:${PORT}`);
 });
