@@ -1,7 +1,9 @@
 require('dotenv').config();
+const fs = require('fs');
 const path = require('path');
 const express = require('express');
 const session = require('express-session');
+const pool = require('./db');
 const { verificarSesion } = require('./middlewares/authMiddleware');
 
 const app = express();
@@ -18,6 +20,24 @@ app.use(
     cookie: { httpOnly: true, sameSite: 'lax', maxAge: 1000 * 60 * 60 * 24 }
   }));
 
+//Deshabilita el cache
+app.use((req, res, next) => {
+  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, private');
+  res.setHeader('Pragma', 'no-cache');
+  res.setHeader('Expires', '0');
+  next();
+});
+//Inicio automatico de base de datos
+async function inicializarBaseDeDatos() {
+  try {
+    const rutaSQL = path.join(__dirname, '../bd/01_estudiantes.sql');
+    const sql = fs.readFileSync(rutaSQL, 'utf8');
+    await pool.query(sql);
+    console.log('Base de datos iniciada.');
+  } catch (error) {
+    console.error('Error al iniciar base de datos', error);
+  }
+}
 // API
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/perfil', require('./routes/perfil'));
@@ -41,7 +61,9 @@ app.use(express.static(path.join(frontendPath, 'pub/pages')));
 app.get('/', (req, res) => {
   res.redirect('/index.html');
 });
-app.listen(PORT, () => {
-  console.log(`Servidor en http://localhost:${PORT}`);
+inicializarBaseDeDatos().then(() => {
+  app.listen(PORT, () => {
+    console.log(`Servidor en http://localhost:${PORT}`);
+  });
 });
 

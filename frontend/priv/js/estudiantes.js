@@ -16,15 +16,16 @@ async function cargarEstudiantes() {
         if (!contenedor) return;
 
         if (estudiantes.length === 0) {
-            contenedor.innerHTML = '<tr><td colspan="5">No hay estudiantes registrados</td></tr>';
+            contenedor.innerHTML = '<tr><td colspan="6">No hay estudiantes registrados</td></tr>';
             return;
         }
         contenedor.innerHTML = estudiantes.map(est => `
             <tr>
                 <td>${est.id}</td>
                 <td>${est.nombre}</td>
-                <td>${est.carrera}</td>
                 <td>${est.email}</td>
+                <td>${est.carrera || 'N/A'}</td>
+                <td>${est.fecha_creacion ? new Date(est.fecha_creacion).toLocaleDateString():'N/A'}</td>
                 <td>
                     <button onclick="eliminarEstudiante(${est.id})">Eliminar</button>
                 </td>

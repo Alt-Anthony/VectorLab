@@ -17,13 +17,19 @@
     </nav>
   </header>
 
-  <main class="contenedor">
+  <main class="container">
     <section class="card">
       <h3 id="formTitle">Crear Nuevo Administrador</h3>
-      <form id="adminForm">
-        <input type="text" id="adminNombre" placeholder="Nombre completo" required>
-        <input type="email" id="adminEmail" placeholder="Correo electrónico" required>
-        <input type="password" id="adminPassword" placeholder="Contraseña" required>
+      <form id="adminForm" onsubmit="procesarNuevoAdmin(event)">
+        <div class="grupo-campo">
+          <input type="text" id="adminNombre" placeholder="Nombre completo" required>
+        </div>
+        <div class="grupo-campo">
+          <input type="email" id="adminEmail" placeholder="Correo electrónico" required>
+        </div>
+        <div class="grupo-campo">
+          <input type="password" id="adminPassword" placeholder="Contraseña" required>
+        </div>
         <button type="submit">Crear Admin</button>
       </form>
     </section>

@@ -2,7 +2,10 @@ exports.verificarSesion = (req, res, next) => {
     if (req.session && req.session.usuario) {
         return next();
     }
-    return res.status(401).json({ status: 'fail', message: 'Unauthorized, faltan credenciales validas' });
+    if (req.originalUrl.startsWith('/api')) {
+        return res.status(401).json({ status: 'fail', message: 'Unauthorized, faltan credenciales validas' });
+    }
+    return res.redirect('/login.html')
 };
 
 exports.esAdmin = (req, res, next) => {

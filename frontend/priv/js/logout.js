@@ -13,5 +13,11 @@ async function cerrarSesion() {
         }
     } catch (error) {
         console.error('Error en logout:', error);
+        window.location.href = '../../pub/pages/login.html';
     }
 }
+window.addEventListener('pageshow', function (event) {
+    if (event.persisted) {
+        window.location.reload();
+    }
+});
