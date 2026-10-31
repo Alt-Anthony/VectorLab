@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro - VectorLab</title>
+    <link rel="stylesheet" href="../css/tema.css">
+</head>
+
+<body>
+    <header class="navbar">
+        <a class="marca" href="/">Vector<span>Lab</span></a>
+        <nav>
+            <a href="/">Inicio</a>
+            <a href="login.html">Iniciar sesión</a>
+        </nav>
+    </header>
+
+    <main class="contenedor-auth">
+        <div class="card-auth">
+            <h2>Registro de Estudiantes</h2>
+            <form id="formRegistro" onsubmit="procesarRegistro(event)">
+                <div class="grupo-campo">
+                    <label for="regNombre">Nombre Completo:</label>
+                    <input type="text" id="regNombre" placeholder="Juan Pérez" required>
+                </div>
+                <div class="grupo-campo">
+                    <label for="regCarrera">Carrera de Interés:</label>
+                    <input type="text" id="regCarrera" placeholder="Ingeniería de Sistemas" required>
+                </div>
+                <div class="grupo-campo">
+                    <label for="regEmail">Correo Electrónico:</label>
+                    <input type="email" id="regEmail" placeholder="usuario@correo.com" required>
+                </div>
+                <div class="grupo-campo">
+                    <label for="regPassword">Contraseña:</label>
+                    <input type="password" id="regPassword" placeholder="••••••••" required>
+                </div>
+                <button type="submit" class="boton-submit">Crear Cuenta</button>
+            </form>
+            <p>¿Ya tienes cuenta? <a href="login.html">Inicia sesión</a></p>
+        </div>
+    </main>
+
+    <script src="../js/auth.js"></script>
+</body>
+
+</html>

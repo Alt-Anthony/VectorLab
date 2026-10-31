@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestión de Estudiantes - VectorLab</title>
+  <link rel="stylesheet" href="../../pub/css/tema.css">
+</head>
+
+<body>
+  <header class="navbar">
+    <a class="marca" href="../pages/dashboard.html">Vector<span>Lab</span></a>
+    <nav>
+      <a href="../pages/dashboard.html">Mi Perfil</a> |
+      <button id="btnLogout" class="boton-link" onclick="cerrarSesion()">Cerrar Sesión</button>
+    </nav>
+  </header>
+
+  <main class="container">
+    <section class="card">
+      <h3 id="formTitle">Crear Nuevo Administrador</h3>
+      <form id="adminForm" onsubmit="procesarNuevoAdmin(event)">
+        <div class="grupo-campo">
+          <input type="text" id="adminNombre" placeholder="Nombre completo" required>
+        </div>
+        <div class="grupo-campo">
+          <input type="email" id="adminEmail" placeholder="Correo electrónico" required>
+        </div>
+        <div class="grupo-campo">
+          <input type="password" id="adminPassword" placeholder="Contraseña" required>
+        </div>
+        <button type="submit">Crear Admin</button>
+      </form>
+    </section>
+
+    <section class="card">
+      <div class="table-header">
+        <h2>Lista de estudiantes</h2>
+        <button type="button" onclick="cargarEstudiantes()">Actualizar</button>
+      </div>
+
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Nombre</th>
+              <th>Email</th>
+              <th>Carrera a la que postula</th>
+              <th>Creado</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="listaEstudiantes"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <script src="../js/estudiantes.js"></script>
+  <script src="../js/logout.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Perfil - VectorLab</title>
+    <link rel="stylesheet" href="../../pub/css/tema.css">
+</head>
+
+<body>
+    <header class="navbar">
+        <a class="marca" href="dashboard.html">Vector<span>Lab</span></a>
+        <button id="btnLogout" class="boton-link" onclick="cerrarSesion()">Cerrar Sesión</button>
+    </header>
+
+    <main class="container">
+        <div class="profile-header">
+            <h2>Mi Perfil</h2>
+            <a href="estudiantes.html" id="btnPanelAdmin" class="boton-link" style="display: none;">
+                Ir al Panel de Administración
+            </a>
+        </div>
+        <section id="datosUsuario" class="card">
+            <p><strong>Nombre:</strong> <span id="usuarioNombre">Cargando...</span></p>
+            <p><strong>Carrera:</strong> <span id="usuarioCarrera">Cargando...</span></p>
+            <p><strong>Correo:</strong> <span id="usuarioEmail">Cargando...</span></p>
+            <p><strong>Rol:</strong> <span id="usuarioRol">Cargando...</span></p>
+        </section>
+
+        <section class="card">
+
+            <h3>Editar Datos Personales</h3>
+            <form id="formPerfil" onsubmit="procesarActualizacionPerfil(event)">
+                <div class="grupo-campo">
+                    <label for="editNombre">Nombre:</label>
+                    <input type="text" id="editNombre" required>
+                </div>
+                <div class="grupo-campo">
+                    <label for="editCarrera">Carrera:</label>
+                    <input type="text" id="editCarrera" required>
+                </div>
+                <button type="submit" class="boton-submit">Guardar Cambios</button>
+            </form>
+
+
+        </section>
+    </main>
+
+    <script src="../js/perfil.js"></script>
+    <script src="../js/logout.js"></script>
+</body>
+
+</html>
