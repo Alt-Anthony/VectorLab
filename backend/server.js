@@ -9,16 +9,29 @@ const { verificarSesion } = require('./middlewares/authMiddleware');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+const sessionSecret = process.env.SESSION_SECRET;
+if (!sessionSecret) {
+  throw new Error('Falta la variable de entorno SESSION_SECRET');
+}
+
+app.set('trust proxy', 1);
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use(
   session({
-    secret: process.env.SESSION_SECRET || 'clave_secreta',
+    secret: sessionSecret,
     resave: false,
     saveUninitialized: false,
-    cookie: { httpOnly: true, sameSite: 'lax', maxAge: 1000 * 60 * 60 * 24 }
-  }));
+    cookie: {
+      httpOnly: true,
+      sameSite: 'lax',
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: 1000 * 60 * 60 * 24
+    }
+  })
+);
 
 //Deshabilita el cache
 app.use((req, res, next) => {
@@ -66,4 +79,3 @@ inicializarBaseDeDatos().then(() => {
     console.log(`Servidor en http://localhost:${PORT}`);
   });
 });
-
