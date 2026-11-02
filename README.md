@@ -48,31 +48,38 @@ El objetivo principal no será simplemente proporcionar respuestas correctas, si
 
 # Estructura del proyecto
 ```bash
-proyecto/
-├── backend
-│   ├── .gitignore
-│   ├── README.md
-│   └── package.json.txt
-├── bd
-│   ├── bd.sql
-│   ├── .gitignore
-│   └── README.md
-├── frontend
-│   ├── .gitignore
-│   ├── index.html
-│   ├── pub
-│        ├── img
-│        ├── js
-│        ├── fonts
-│        ├── others
-│   ├── priv
-│   └── README.md
+VectorLab/
+├── backend/
+│   ├── config/
+│   │   └── db.js                 # Conexión y pool de PostgreSQL
+│   ├── controllers/              # Lógica de negocio
+│   │   ├── adminController.js    # Administración de estudiantes
+│   │   └── authController.js     # Autenticación y registro
+│   ├── middlewares/              # Interceptores de seguridad
+│   │   └── authMiddleware.js     # Verificación de sesión y roles
+│   ├── models/                   # Persistencia y consultas SQL
+│   │   └── users.js              # Consultas a la tabla usuarios
+│   ├── routes/                   # Enrutadores Express.js
+│   │   ├── auth.js               # Rutas públicas (/api/auth)
+│   │   ├── estudiantes.js        # Rutas de administración (/api/estudiantes)
+│   │   └── perfil.js             # Rutas protegidas (/api/perfil)
+│   ├── server.js                 # Servidor principal de Express
+│   ├── package.json              # Configuración y dependencias de Node.js
+│   └── .gitignore
+├── bd/                           # Scripts de la base de datos
+│   ├── 01_estudiantes.sql        # Script DDL de esquema inicial
+├── frontend/                     # Cliente Web
+│   ├── priv/                     # Vistas protegidas por sesión
+│   │   ├── perfil.html           # Interfaz de perfil
+│   │   └── estudiantes.html      # Interfaz de administración
+│   ├── pub/                      # Recursos de acceso público
+│   │   ├── js/
+│   │   │   └── auth.js           # Lógica cliente para autenticación
+│   ├── index.html                # Página principal de entrada
+├── informes/                     # Documentación y reportes del proyecto
+│   ├── IDWeb_lab07_avance_proyecto.pdf
+│   └── IDWeb_proyecto_informe_final.pdf
 ├── .gitignore
-├── informes
-│   ├── IDWeb_lab07_avance_proyecto.pdf
-│   ├── IDWeb_lab07_avance_proyecto.pdf
-│   ├── IDWeb_lab07_avance_proyecto.pdf
-│   ├── IDWeb_proyecto_informe_final.pdf
 └── README.md
 ```
 
