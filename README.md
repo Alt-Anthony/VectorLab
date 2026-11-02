@@ -44,7 +44,7 @@ El objetivo principal no será simplemente proporcionar respuestas correctas, si
 
 
 # Modelo de Datos[^3]
-![image](enrollmentsv1.0.png)
+![image](<img width="399" height="349" alt="image" src="https://github.com/user-attachments/assets/050cc738-4340-4be1-9524-99125aff4b78" />)
 
 # Estructura del proyecto
 ```bash
