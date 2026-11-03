@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laboratorio - VectorLab</title>
+    <link rel="stylesheet" href="/pub/css/laboratorio.css">
+    <!-- KaTeX: fórmulas de la resolución paso a paso -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+</head>
+
+<body>
+    <header class="lab-barra">
+        <strong>Vector<span class="marca">Lab</span> · <span id="tituloLaboratorio">Laboratorio</span></strong>
+        <div class="lab-acciones">
+            <label id="campoValor" class="campo-valor solo-edicion" hidden>
+                <span data-etiqueta>Peso</span>
+                <input id="inputValor" type="number" step="any">
+                <span data-unidad>N</span>
+            </label>
+            <label id="campoTexto" class="campo-valor solo-edicion" hidden>
+                Texto <input id="inputTexto" type="text" maxlength="12">
+            </label>
+            <label id="campoLargo" class="campo-valor solo-edicion" hidden>
+                Largo <input id="inputLargo" type="number" min="1" max="40" step="1"> cuadros
+            </label>
+            <label id="campoNombre" class="campo-valor solo-edicion" hidden title="Nombre para resaltar la pieza en los pasos de la solución">
+                Nombre <input id="inputNombre" type="text" maxlength="30" placeholder="ej. barra">
+            </label>
+            <button id="btnRotarIzq" class="solo-edicion" title="Rotar −15° (Shift + R)">⟲ Rotar</button>
+            <button id="btnRotarDer" class="solo-edicion" title="Rotar +15° (R)">⟳ Rotar</button>
+            <button id="btnEliminar" class="solo-edicion" title="Eliminar (Supr)">Eliminar</button>
+            <button id="btnLimpiar" class="solo-edicion">Limpiar todo</button>
+            <button id="btnCopiarEscena" class="solo-edicion" title="Copia la figura como JSON para guardarla como escena de una pregunta">Copiar escena</button>
+            <label class="campo-valor" title="Cómo se muestran los pesos (por dentro siempre se usa kg)">
+                Unidades
+                <select id="selectorUnidad">
+                    <option value="N">N (peso)</option>
+                    <option value="kg">kg (masa)</option>
+                    <option value="kgf">kgf</option>
+                </select>
+            </label>
+            <div id="controlesPasos" class="controles-pasos" hidden>
+                <button id="btnAnterior">◀ Anterior</button>
+                <span id="contadorPaso"></span>
+                <button id="btnSiguiente" class="boton-simular">Siguiente ▶</button>
+            </div>
+            <button id="btnSimular" class="boton-simular">▶ Simular</button>
+        </div>
+    </header>
+
+    <div class="lab">
+        <aside class="lab-recursos">
+            <h2>Recursos</h2>
+            <p>Arrástralos al lienzo.</p>
+            <div id="listaRecursos"></div>
+        </aside>
+
+        <main class="lab-area">
+            <svg id="lienzo" class="lab-lienzo" aria-label="Lienzo del laboratorio">
+                <defs>
+                    <pattern id="cuadricula" width="20" height="20" patternUnits="userSpaceOnUse">
+                        <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#e5e7eb" stroke-width="1" />
+                    </pattern>
+                    <pattern id="cuadriculaMayor" width="100" height="100" patternUnits="userSpaceOnUse">
+                        <rect width="100" height="100" fill="url(#cuadricula)" />
+                        <path d="M 100 0 L 0 0 0 100" fill="none" stroke="#cbd5e1" stroke-width="1" />
+                    </pattern>
+                    <pattern id="rayado" width="10" height="10" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+                        <line x1="0" y1="0" x2="0" y2="10" stroke="#9ca3af" stroke-width="2" />
+                    </pattern>
+                </defs>
+                <rect width="100%" height="100%" fill="url(#cuadriculaMayor)" />
+                <g id="suelo">
+                    <rect x="0" y="0" height="6" fill="#6b7280" />
+                    <rect x="0" y="6" height="60" fill="url(#rayado)" />
+                </g>
+                <g id="capaPiezas"></g>
+                <g id="capaConexiones"></g>
+                <g id="capaAnotaciones"></g>
+            </svg>
+            <p class="lab-ayuda solo-edicion">R rota · Shift + R rota al otro lado · Supr elimina · Esc deselecciona</p>
+        </main>
+    </div>
+
+    <!-- Matter.js: motor de física 2D (MIT) -->
+    <script src="https://cdn.jsdelivr.net/npm/matter-js@0.20.0/build/matter.min.js"></script>
+    <script src="/priv/js/laboratorio/piezas.js"></script>
+    <script src="/priv/js/laboratorio/simulacion.js"></script>
+    <script src="/priv/js/api.js"></script>
+    <script src="/priv/js/laboratorio/editor.js"></script>
+    <script src="/priv/js/laboratorio/escena.js"></script>
+    <script src="/priv/js/laboratorio/pasos.js"></script>
+</body>
+
+</html>
