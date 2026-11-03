@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Curso - VectorLab</title>
+    <link rel="stylesheet" href="../../pub/css/tema.css">
+</head>
+
+<body>
+    <header class="navbar">
+        <a class="marca" href="dashboard.html">Vector<span>Lab</span></a>
+        <button class="boton-link" onclick="cerrarSesion()">Cerrar Sesión</button>
+    </header>
+
+    <main class="container">
+        <a class="volver" href="dashboard.html">← Inicio</a>
+        <section class="card">
+            <h2 id="tituloCurso">Cargando…</h2>
+            <p class="texto-suave">Elige un tema para ver sus preguntas.</p>
+            <div id="listaTemas" class="grilla"></div>
+        </section>
+    </main>
+
+    <script src="../js/api.js"></script>
+    <script src="../js/curso.js"></script>
+    <script src="../js/logout.js"></script>
+</body>
+
+</html>
