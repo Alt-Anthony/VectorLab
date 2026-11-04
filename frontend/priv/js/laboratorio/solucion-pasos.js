@@ -1,8 +1,8 @@
 // Resolución paso a paso (modo solución).
 // Cada paso puede resaltar piezas (cuadros rojos), dibujar flechas de fuerza y cotas, y simular.
 // La explicación de cada paso la muestra la página de la solución (ventana padre) al recibir un mensaje.
-// Usa del editor: $, SVG_NS, lienzo, piezas, iniciarSimulacion, detenerSimulacion y botones;
-// de escena.js: desplazamientoEscena; de piezas.js: dibujoDe y dibujarCota; de api.js: renderizarFormulas.
+// Usa de editor-lienzo.js: $, SVG_NS, lienzo, piezas, iniciarSimulacion, detenerSimulacion y botones;
+// de cargar-figura.js: desplazamientoEscena; de dibujo-piezas.js: dibujoDe y dibujarCota; de api.js: renderizarFormulas.
 
 const LARGO_FLECHA = 60;
 const ANCHO_TEXTO = 280;      // ancho de la explicación y de la columna de fórmulas

@@ -1,5 +1,5 @@
 // Pruebas del laboratorio: unidades, escenas guardadas, conexiones y física.
-// Carga piezas.js y simulacion.js igual que el navegador (scripts con variables globales) usando vm.
+// Carga dibujo-piezas.js y motor-fisica.js igual que el navegador (scripts con variables globales) usando vm.
 
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
@@ -23,7 +23,7 @@ function cargarLaboratorio() {
         },
         cancelAnimationFrame: () => {}
     });
-    ['piezas.js', 'simulacion.js'].forEach((archivo) => {
+    ['dibujo-piezas.js', 'motor-fisica.js'].forEach((archivo) => {
         vm.runInContext(fs.readFileSync(path.join(CARPETA_LABORATORIO, archivo), 'utf8'), contexto, { filename: archivo });
     });
     const globales = vm.runInContext('({ PIEZAS, VALORES, UNIDADES, G, detectarConexiones, crearSimulacion })', contexto);

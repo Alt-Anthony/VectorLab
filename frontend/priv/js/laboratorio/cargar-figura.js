@@ -2,8 +2,8 @@
 // Formato: { "unidad": "N" | "kg" | "kgf", "piezas": [{ tipo, x, y, rotacion?, valor?, texto?, largo?, ref? }] }
 //   valor en unidades internas (kg para bloques y barras, N para fuerzas); ref es el nombre que usan los pasos.
 // Usa del editor: $, piezas, unidadActual, entradas, lienzo, parametrosUrl, agregarPieza, seleccionar,
-// actualizarConexiones, ajustarACuadricula y TEXTO_MAXIMO; de piezas.js: PIEZAS, VALORES y UNIDADES;
-// de api.js: pedirDatos; de pasos.js: prepararPasos.
+// actualizarConexiones, ajustarACuadricula y TEXTO_MAXIMO; de dibujo-piezas.js: PIEZAS, VALORES y UNIDADES;
+// de api.js: pedirDatos; de solucion-pasos.js: prepararPasos.
 
 const MARGEN_SUPERIOR = 120;     // altura a la que se coloca la figura de una pregunta
 const REF_VALIDA = /^[A-Za-z0-9_]{1,30}$/;

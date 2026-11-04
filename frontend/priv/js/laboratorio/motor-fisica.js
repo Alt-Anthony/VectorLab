@@ -49,7 +49,7 @@ function apoyo(pieza) {
     return Matter.Bodies.fromVertices(centro.x, centro.y, [vertices], OPCIONES_FIJO);
 }
 
-// Cómo se convierte cada tipo de pieza en un cuerpo (las medidas coinciden con su dibujo en piezas.js)
+// Cómo se convierte cada tipo de pieza en un cuerpo (las medidas coinciden con su dibujo en dibujo-piezas.js)
 const CONSTRUCTORES = Object.freeze({
     techo: (p) => rectangulo(p, 0, 4, 200, 8, OPCIONES_FIJO),
     piso: (p) => rectangulo(p, 0, -4, 200, 8, OPCIONES_FIJO),

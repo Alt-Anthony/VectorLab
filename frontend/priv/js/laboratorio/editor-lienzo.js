@@ -1,5 +1,5 @@
 // Laboratorio: arrastra piezas al lienzo cuadriculado, muévelas, rótalas, edítalas y simula.
-// Usa PIEZAS, VALORES, UNIDADES y dibujoDe (piezas.js) y crearSimulacion y detectarConexiones (simulacion.js).
+// Usa PIEZAS, VALORES, UNIDADES y dibujoDe (dibujo-piezas.js) y crearSimulacion y detectarConexiones (motor-fisica.js).
 // Con ?pregunta=ID carga la figura de esa pregunta; con &modo=solucion solo muestra la figura (no se edita).
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
@@ -311,7 +311,7 @@ function detenerSimulacion() {
 
 const alternarSimulacion = () => (simulacion ? detenerSimulacion() : iniciarSimulacion());
 
-// En modo solución, si la pregunta tiene pasos, el botón principal empieza la resolución paso a paso (pasos.js)
+// En modo solución, si la pregunta tiene pasos, el botón principal empieza la resolución paso a paso (solucion-pasos.js)
 function alPresionarBotonPrincipal() {
     if (MODO_SOLUCION && hayPasos()) {
         empezarPasos();

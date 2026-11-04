@@ -2,7 +2,7 @@
 // Cada pieza se dibuja con su origen en (0, 0): las físicas centradas, la cota desde su extremo izquierdo.
 // Las medidas son múltiplos de 20 (el tamaño de la cuadrícula) para que las piezas encajen entre sí.
 // zona: [x, y, ancho, alto] del área para agarrar la pieza y del recuadro de selección.
-// Los textos (.valor y .texto) los rellena editor.js con textContent.
+// Los textos (.valor y .texto) los rellena editor-lienzo.js con textContent.
 
 const COLOR_LINEA = '#1f2937';
 const COLOR_COTA = '#374151';
