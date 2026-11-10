@@ -4,26 +4,124 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>VectorLab</title>
-  <link rel="stylesheet" href="../css/tema.css">
+  <title>VectorLab · Visualiza. Experimenta. Resuelve.</title>
+  <link rel="icon" type="image/png" href="/pub/img/favicon.png">
+  <link rel="stylesheet" href="/pub/css/tema.css">
+  <link rel="stylesheet" href="/pub/css/portada.css">
 </head>
 
-<body>
+<body class="inicio">
   <header class="navbar">
-    <a class="marca" href="/">Vector<span>Lab</span></a>
+    <a class="marca" href="/">
+      <img src="/pub/img/logo.png" alt="" width="34" height="34">
+      <span class="texto-marca">Vector<span>Lab</span></span>
+    </a>
     <nav>
+      <a href="#cursos">Cursos</a>
+      <a href="#como-funciona">Cómo funciona</a>
       <a href="login.html">Iniciar sesión</a>
-      <a href="registro.html">Registrarse</a>
+      <a href="registro.html" class="boton-link">Registrarse</a>
     </nav>
   </header>
 
   <main>
-    <section class="hero">
-      <h1>VectorLab</h1>
-      <p>Plataforma de enseñanza interactiva para estudiantes preuniversitarios</p>
-      <a class="boton-link" href="registro.html">Registro de estudiantes</a>
+    <section class="portada">
+      <div>
+        <p class="etiqueta"> PLATAFORMA DE CIENCIAS EXACTAS </p>
+        <h1>Vector<span>Lab</span></h1>
+        <p class="lema">Visualiza. Experimenta. Resuelve.</p>
+        <p class="apoyo">Laboratorio de análisis visual para fortalecer tu preparación preuniversitaria en ciencias exactas.</p>
+        <div class="acciones">
+          <a class="boton-link" href="registro.html">Registrarse gratis</a>
+          <a class="boton-link boton-borde" href="#como-funciona">Ver cómo funciona</a>
+        </div>
+      </div>
+      <figure class="ventana">
+        <div class="ventana-barra"><i></i><i></i><i></i></div>
+        <img src="/pub/img/laboratorio-simulacion.jpg"
+             alt="Laboratorio de VectorLab con una polea, una barra y dos bloques de 20 N">
+      </figure>
+    </section>
+
+    <section id="como-funciona" class="seccion">
+      <h2>Cómo funciona</h2>
+      <div class="pasos">
+        <article class="paso">
+          <img class="paso-img" src="/pub/img/paso-1.jpg" alt="Elegir un curso y un tema" loading="lazy" onerror="this.remove()">
+          <span class="numero">1</span>
+          <h3>Elige un curso y un tema</h3>
+          <p>Física, Geometría o Trigonometría, organizados por temas.</p>
+        </article>
+        <article class="paso">
+          <img class="paso-img" src="/pub/img/paso-2.jpg" alt="Lee el enunciado y marca la alternativa correcta" loading="lazy" onerror="this.remove()">          
+          <span class="numero">2</span>
+          <h3>Lee la pregunta</h3>
+          <p>Cada ejercicio tiene su enunciado, sus alternativas y su resolución.</p>
+        </article>
+        <article class="paso">
+          <img class="paso-img" src="/pub/img/paso-3.jpg" alt="Explora en el laboratorio" loading="lazy" onerror="this.remove()">
+          <span class="numero">3</span>
+          <h3>Mira la solución paso a paso</h3>
+          <p>El laboratorio arma la figura, marca las fuerzas y simula el resultado.</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="cursos" class="seccion">
+      <h2>Cursos y temario</h2>
+      <div class="cursos">
+        <article class="curso fisica">
+          <article class="curso fisica">
+            <img class="curso-img" src="/pub/img/curso-fisica.jpg" alt="Ilustración de Física" loading="lazy" onerror="this.remove()">
+          <h3>Física</h3>
+          <p>Vectores, fuerzas y equilibrio de cuerpos.</p>
+          <ul>
+            <li>Vectores en el plano</li>
+            <li>Fuerzas y plano inclinado</li>
+            <li>Tiro parabólico</li>
+            <li>Equilibrio y palancas <em>con laboratorio</em></li>
+            <li>Circuitos eléctricos</li>
+          </ul>
+        </article>
+        <article class="curso geometria">
+          <h3>Geometría</h3>
+          <img class="curso-img" src="/pub/img/curso-geometria.jpg" alt="Ilustración de Geometría" loading="lazy" onerror="this.remove()">
+          <p>Figuras, medidas y relaciones entre ellas.</p>
+          <ul>
+            <li>Ángulos</li>
+            <li>Polígonos y áreas</li>
+            <li>Semejanza de triángulos</li>
+            <li>Circunferencia</li>
+            <li>Sólidos geométricos</li>
+          </ul>
+        </article>
+        <article class="curso trigonometria">
+          <img class="curso-img" src="/pub/img/curso-trigonometria.jpg" alt="Ilustración de Trigonometría" loading="lazy" onerror="this.remove()">
+          <h3>Trigonometría</h3>
+          <p>Triángulos y razones trigonométricas.</p>
+          <ul>
+            <li>Triángulo rectángulo</li>
+            <li>Ángulos de elevación</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <section class="seccion">
+      <h2>Aprende viendo cómo se resuelve</h2>
+      <p class="intro">La pregunta a un lado y el laboratorio al otro: cada paso resalta las piezas, dibuja las fuerzas y acumula las fórmulas.</p>
+      <figure class="ventana ancha">
+        <div class="ventana-barra"><i></i><i></i><i></i></div>
+        <img src="/pub/img/laboratorio-solucion.png"
+             alt="Solución paso a paso de una pregunta de equilibrio y palancas" loading="lazy">
+      </figure>
+      <p class="centro"><a class="boton-link" href="registro.html">Probar el laboratorio</a></p>
     </section>
   </main>
+
+  <footer class="pie">
+    <p>VectorLab · Introducción al Desarrollo Web · 2026</p>
+  </footer>
 </body>
 
 </html>
