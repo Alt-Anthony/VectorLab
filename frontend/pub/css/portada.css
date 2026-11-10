@@ -1,0 +1,147 @@
+/* Portada. Se carga después de tema.css y usa sus variables. */
+html { scroll-behavior: smooth; }
+img { max-width: 100%; height: auto; display: block; }
+
+body.inicio {
+  background:
+    radial-gradient(circle at 80% -10%, rgba(124, 58, 237, 0.2), transparent 45%),
+    var(--fondo);
+}
+
+/* Barra superior */
+body.inicio .navbar { position: sticky; top: 0; z-index: 10; }
+.navbar .marca { display: flex; align-items: center; gap: 10px; }
+.navbar .marca .texto-marca span { color: var(--acento); }
+.navbar nav { display: flex; align-items: center; }
+.navbar nav a.boton-link { color: #fff; padding: 9px 16px; border-bottom: none; }
+
+/* Botones extra */
+.acciones { display: flex; flex-wrap: wrap; gap: 12px; }
+.boton-borde { background: transparent; border: 1px solid var(--texto-suave); }
+.boton-borde:hover { background: rgba(255, 255, 255, 0.08); }
+
+/* Portada */
+.portada {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;  
+  gap: 48px;
+  align-items: center;
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 72px 6vw;
+}
+.etiqueta {
+  margin: 0 0 14px;
+  color: var(--acento);
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+}
+.portada h1 {
+  margin: 0;
+  font-size: clamp(52px, 6vw, 84px);
+  font-weight: 800;
+  line-height: 1.05;
+  color: white;
+}
+.portada h1 span { color: var(--acento); font-weight: 800; }
+.lema {
+  margin: 10px 0 22px;
+  font-size: clamp(34px, 4vw, 54px);
+  font-weight: 800;
+  line-height: 1.12;
+  color: white;
+}
+.apoyo {
+  margin: 0 0 30px;
+  max-width: 540px;
+  color: var(--texto-suave);
+  font-size: 20px;
+}
+.portada .boton-link { padding: 13px 24px; font-size: 17px; }
+/* Ventana con captura */
+.ventana {
+  margin: 0;
+  overflow: hidden;
+  background: var(--superficie);
+  border: 1px solid var(--borde);
+  border-radius: 12px;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
+}
+.ventana-barra { display: flex; gap: 6px; padding: 10px 12px; background: #231a42; }
+.ventana-barra i { width: 10px; height: 10px; border-radius: 50%; background: #475569; }
+.ventana-barra i:nth-child(1) { background: #f87171; }
+.ventana-barra i:nth-child(2) { background: #fbbf24; }
+.ventana-barra i:nth-child(3) { background: #34d399; }
+.ventana img { width: 100%; background: #fff; }
+.ventana.ancha { max-width: 1000px; margin: 24px auto; }
+
+/* Secciones */
+.seccion { max-width: 1300px; margin: 0 auto; padding: 48px 6vw; }
+.seccion h2 { margin: 0 0 22px; font-size: 28px; color: white; }
+.intro { max-width: 640px; margin: -8px 0 8px; color: var(--texto-suave); }
+.centro { text-align: center; }
+
+.pasos { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 18px; }
+.paso {
+  padding: 22px;
+  background: var(--superficie);
+  border: 1px solid var(--borde);
+  border-radius: 12px;
+}
+.numero {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  margin-bottom: 10px;
+  border-radius: 50%;
+  background: var(--acento);
+  color: white;
+  font-weight: 700;
+}
+.paso h3 { margin: 0 0 6px; font-size: 18px; color: white; }
+.paso p { margin: 0; color: var(--texto-suave); }
+
+/* Cursos */
+.cursos { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 18px; }
+.curso {
+  --color: var(--acento);
+  padding: 22px;
+  background: var(--superficie);
+  border: 1px solid var(--borde);
+  border-top: 3px solid var(--color);
+  border-radius: 12px;
+}
+.curso.fisica { --color: #22d3ee; }
+.curso.geometria { --color: #fb923c; }
+.curso.trigonometria { --color: #a78bfa; }
+.curso h3 { margin: 0 0 6px; color: var(--color); font-size: 22px; }
+.curso p { margin: 0 0 12px; color: var(--texto-suave); }
+.curso ul { margin: 0; padding-left: 18px; }
+.curso li { margin-bottom: 4px; }
+.curso em {
+  margin-left: 6px;
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: rgba(124, 58, 237, 0.25);
+  color: #c4b5fd;
+  font-size: 12px;
+  font-style: normal;
+}
+
+/* Pie */
+.pie {
+  padding: 28px 6vw;
+  border-top: 1px solid var(--borde);
+  color: var(--texto-suave);
+  text-align: center;
+}
+.pie p { margin: 0; }
+
+/* Celular */
+@media (max-width: 860px) {
+  .portada { grid-template-columns: 1fr; padding-top: 40px; }
+  .navbar nav a:not(.boton-link) { display: none; }
+}
