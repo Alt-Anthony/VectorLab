@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Laboratorio - VectorLab</title>
     <link rel="stylesheet" href="/pub/css/laboratorio.css">
+    <link rel="stylesheet" href="/pub/css/geometria.css">
     <!-- KaTeX: fórmulas de la resolución paso a paso -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
@@ -27,14 +28,19 @@
             <label id="campoLargo" class="campo-valor solo-edicion" hidden>
                 Largo <input id="inputLargo" type="number" min="1" max="40" step="1"> cuadros
             </label>
+            <label id="campoAngulo" class="campo-valor solo-edicion" hidden title="Ángulo sobre la horizontal">
+                Ángulo <input id="inputAngulo" type="number" min="-89" max="89" step="1"> °
+            </label>
             <label id="campoNombre" class="campo-valor solo-edicion" hidden title="Nombre para resaltar la pieza en los pasos de la solución">
                 Nombre <input id="inputNombre" type="text" maxlength="30" placeholder="ej. barra">
             </label>
             <button id="btnRotarIzq" class="solo-edicion" title="Rotar −15° (Shift + R)">⟲ Rotar</button>
             <button id="btnRotarDer" class="solo-edicion" title="Rotar +15° (R)">⟳ Rotar</button>
+            <button id="btnEspejo" class="solo-edicion" title="Voltear la rampa o la pista">⇋ Espejo</button>
             <button id="btnEliminar" class="solo-edicion" title="Eliminar (Supr)">Eliminar</button>
             <button id="btnLimpiar" class="solo-edicion">Limpiar todo</button>
             <button id="btnCopiarEscena" class="solo-edicion" title="Copia la figura como JSON para guardarla como escena de una pregunta">Copiar escena</button>
+            <button id="btnMedidas" class="solo-edicion" title="Muestra u oculta las medidas de la geometría">Ocultar medidas</button>
             <label class="campo-valor" title="Cómo se muestran los pesos (por dentro siempre se usa kg)">
                 Unidades
                 <select id="selectorUnidad">
@@ -54,9 +60,15 @@
 
     <div class="lab">
         <aside class="lab-recursos">
-            <h2>Recursos</h2>
+            <div class="pestanas" role="tablist">
+                <button class="pestana activa" data-pestana="fisica" role="tab">Física</button>
+                <button class="pestana" data-pestana="circuitos" role="tab">Circuitos</button>
+                <button class="pestana" data-pestana="geometria" role="tab">Geometría</button>
+            </div>
             <p>Arrástralos al lienzo.</p>
-            <div id="listaRecursos"></div>
+            <div id="listaRecursos" class="lista-recursos" data-pestana="fisica"></div>
+            <div id="listaCircuitos" class="lista-recursos" data-pestana="circuitos" hidden></div>
+            <div id="listaGeometria" class="lista-recursos" data-pestana="geometria" hidden></div>
         </aside>
 
         <main class="lab-area">
@@ -72,28 +84,53 @@
                     <pattern id="rayado" width="10" height="10" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
                         <line x1="0" y1="0" x2="0" y2="10" stroke="#9ca3af" stroke-width="2" />
                     </pattern>
+                    <!-- Rayado de las regiones de geometría que lo piden -->
+                    <pattern id="rayadoGeo" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+                        <rect width="8" height="8" fill="#ffffff" fill-opacity="0.6" />
+                        <line x1="0" y1="0" x2="0" y2="8" stroke="#64748b" stroke-width="1.5" />
+                    </pattern>
+                    <!-- Punta de flecha de los rayos de geometría -->
+                    <marker id="puntaRayo" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="userSpaceOnUse"
+                        markerWidth="12" markerHeight="12" orient="auto">
+                        <path d="M 0 0 L 10 5 L 0 10 z" fill="#1f2937" />
+                    </marker>
                 </defs>
                 <rect width="100%" height="100%" fill="url(#cuadriculaMayor)" />
                 <g id="suelo">
                     <rect x="0" y="0" height="6" fill="#6b7280" />
                     <rect x="0" y="6" height="60" fill="url(#rayado)" />
                 </g>
+                <g id="capaCampos"></g>
                 <g id="capaPiezas"></g>
+                <g id="capaGeometria"></g>
+                <g id="capaSimulacion"></g>
                 <g id="capaConexiones"></g>
                 <g id="capaAnotaciones"></g>
             </svg>
-            <p class="lab-ayuda solo-edicion">R rota · Shift + R rota al otro lado · Supr elimina · Esc deselecciona</p>
+            <p class="lab-ayuda solo-edicion">R rota · Shift + R rota al otro lado · Supr elimina · Esc deselecciona · Los puntos de geometría se arrastran</p>
         </main>
     </div>
 
     <!-- Matter.js: motor de física 2D (MIT) -->
     <script src="https://cdn.jsdelivr.net/npm/matter-js@0.20.0/build/matter.min.js"></script>
-    <script src="/priv/js/laboratorio/piezas.js"></script>
-    <script src="/priv/js/laboratorio/simulacion.js"></script>
+    <script src="/priv/js/laboratorio/cota.js"></script>
+    <script src="/priv/js/laboratorio/dibujo-circuitos.js"></script>
+    <script src="/priv/js/laboratorio/dibujo-piezas.js"></script>
+    <script src="/priv/js/laboratorio/engranajes.js"></script>
+    <script src="/priv/js/laboratorio/motor-fisica.js"></script>
+    <script src="/priv/js/laboratorio/mecanismos.js"></script>
+    <script src="/priv/js/laboratorio/circuitos.js"></script>
+    <script src="/priv/js/laboratorio/proyectiles.js"></script>
+    <script src="/priv/js/laboratorio/cargas.js"></script>
+    <script src="/priv/js/geometria/motor-geometria.js"></script>
+    <script src="/priv/js/geometria/plantillas-geometria.js"></script>
+    <script src="/priv/js/geometria/dibujo-geometria.js"></script>
     <script src="/priv/js/api.js"></script>
-    <script src="/priv/js/laboratorio/editor.js"></script>
-    <script src="/priv/js/laboratorio/escena.js"></script>
-    <script src="/priv/js/laboratorio/pasos.js"></script>
+    <script src="/priv/js/laboratorio/editor-lienzo.js"></script>
+    <script src="/priv/js/laboratorio/efectos-simulacion.js"></script>
+    <script src="/priv/js/geometria/capa-geometria.js"></script>
+    <script src="/priv/js/laboratorio/cargar-figura.js"></script>
+    <script src="/priv/js/laboratorio/solucion-pasos.js"></script>
 </body>
 
 </html>

@@ -4,8 +4,17 @@ const parametros = new URLSearchParams(window.location.search);
 const claveCurso = parametros.get('curso');
 const claveTema = parametros.get('tema');
 
-// Temas que ya tienen laboratorio (se abre en otra pestaña)
-const LABORATORIOS = Object.freeze({ palanca_equilibrio: '/laboratorio' });
+// Temas que ya se pueden armar en el laboratorio (se abre en otra pestaña, en la pestaña de recursos que les toca)
+const LABORATORIO_GEOMETRIA = '/laboratorio?pestana=geometria';
+const LABORATORIOS = Object.freeze({
+    palanca_equilibrio: '/laboratorio',
+    angulos: LABORATORIO_GEOMETRIA,
+    triangulo_rectangulo: LABORATORIO_GEOMETRIA,
+    triangulo_semejanza: LABORATORIO_GEOMETRIA,
+    circunferencia: LABORATORIO_GEOMETRIA,
+    poligonos_areas: LABORATORIO_GEOMETRIA,
+    sector_circular: LABORATORIO_GEOMETRIA
+});
 
 function mostrarBotonLaboratorio(tema) {
     const ruta = LABORATORIOS[tema.clave];
@@ -68,7 +77,9 @@ function crearTarjetaPregunta(pregunta, indice) {
     if (pregunta.imagen) cuerpo.append(crearFigura(pregunta.imagen));
     cuerpo.append(texto);
 
-    tarjeta.append(cabecera, cuerpo, LABORATORIOS[claveTema] ? crearEnlaceSolucion(pregunta) : crearRespuesta(pregunta));
+    // Si la pregunta ya tiene su figura armada, abre la solución paso a paso; si no, muestra la respuesta escrita
+    const conLaboratorio = LABORATORIOS[claveTema] && pregunta.tiene_solucion;
+    tarjeta.append(cabecera, cuerpo, conLaboratorio ? crearEnlaceSolucion(pregunta) : crearRespuesta(pregunta));
     return tarjeta;
 }
 

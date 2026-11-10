@@ -1,0 +1,182 @@
+/* Capa de geometría del laboratorio: cómo se ve cada objeto de la figura (se suma a laboratorio.css) */
+
+.geo .trazo {
+  fill: none;
+  stroke: #1f2937;
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+.geo.punteado .trazo {
+  stroke-dasharray: 6 5;
+}
+
+/* La capa de geometría no tapa los clics a las piezas de física: solo sus puntos libres se pueden agarrar */
+#capaGeometria {
+  pointer-events: none;
+}
+
+#capaGeometria .geo-punto.libre .agarre {
+  pointer-events: all;
+}
+
+/* Puntos: la marca se ve; el agarre es un círculo invisible más grande para agarrarlo fácil */
+.geo-punto .marca {
+  fill: #1f2937;
+}
+
+.geo-punto .agarre {
+  fill: transparent;
+}
+
+.geo-punto.libre .agarre {
+  cursor: grab;
+}
+
+.geo-punto.libre:hover .marca {
+  fill: #7c3aed;
+}
+
+.geo-punto.elegido .agarre {
+  fill: rgba(37, 99, 235, 0.15);
+  stroke: #2563eb;
+  stroke-width: 1.5;
+  stroke-dasharray: 4 3;
+}
+
+.geo-punto.elegido .marca {
+  fill: #2563eb;
+}
+
+body.modo-solucion .geo-punto.libre .agarre {
+  cursor: default;
+}
+
+body.modo-solucion .geo-punto.libre:hover .marca {
+  fill: #1f2937;
+}
+
+/* Textos: letras de los puntos, textos de ángulos y segmentos, y medidas */
+.geo text {
+  font-family: 'Segoe UI', Arial, Helvetica, sans-serif;
+  text-anchor: middle;
+  dominant-baseline: central;
+  pointer-events: none;
+  user-select: none;
+}
+
+.geo .etiqueta {
+  fill: #1f2937;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.geo .texto {
+  fill: #374151;
+  font-size: 14px;
+}
+
+.geo .medida {
+  fill: #16a34a;
+  font-weight: 700;
+}
+
+/* Ángulos: arco morado con el interior pintado suave */
+.geo-angulo .arco,
+.geo-angulo .recto {
+  fill: none;
+  stroke: #7c3aed;
+  stroke-width: 1.8;
+}
+
+.geo-angulo .relleno {
+  fill: rgba(124, 58, 237, 0.1);
+  stroke: none;
+}
+
+.geo-angulo .texto {
+  fill: #6d28d9;
+  font-weight: 600;
+}
+
+/* Regiones sombreadas (polígonos y sectores) */
+.geo-region .relleno {
+  fill: rgba(148, 163, 184, 0.35);
+  stroke: #1f2937;
+  stroke-width: 1.5;
+}
+
+/* Ejes cartesianos y gráficas */
+.geo-ejes .eje {
+  stroke: #475569;
+  stroke-width: 1.5;
+}
+
+.geo .numero {
+  fill: #475569;
+  font-size: 11px;
+}
+
+.geo .curva {
+  stroke: #2563eb;
+  stroke-width: 2.5;
+}
+
+.geo .vertice {
+  fill: #2563eb;
+}
+
+.geo .guia {
+  stroke: #f59e0b;
+  stroke-width: 1.2;
+  stroke-dasharray: 4 4;
+}
+
+/* Lados iguales, arcos, partes ocultas de los sólidos y regiones rayadas */
+.geo .marca-igual {
+  stroke: #1f2937;
+  stroke-width: 1.8;
+}
+
+.geo .arco-geo {
+  stroke: #7c3aed;
+}
+
+.geo .oculto {
+  stroke-dasharray: 5 4;
+  stroke-width: 1.5;
+}
+
+.geo-region .rayado {
+  fill: url(#rayadoGeo);
+}
+
+/* Resaltado de la solución paso a paso: marca en rojo el objeto del que se habla */
+.resaltado-geo line {
+  stroke: #dc2626;
+  stroke-width: 8;
+  stroke-linecap: round;
+  opacity: 0.35;
+}
+
+.resaltado-geo circle,
+.resaltado-geo path {
+  fill: rgba(220, 38, 38, 0.12);
+  stroke: #dc2626;
+  stroke-width: 2.5;
+  stroke-dasharray: 6 4;
+}
+
+.resaltado-circulo circle {
+  fill: none;
+}
+
+.resaltado-curva path,
+.resaltado-arco path,
+.resaltado-ejes path,
+.resaltado-elipse path {
+  fill: none;
+  stroke-width: 6;
+  stroke-dasharray: none;
+  opacity: 0.45;
+}

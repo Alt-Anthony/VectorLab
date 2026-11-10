@@ -81,6 +81,12 @@ app.get('/laboratorio', verificarSesion, (req, res) => {
   res.sendFile(path.join(frontendPath, 'priv/pages/laboratorio.html'));
 });
 
+// La geometría ahora está dentro del laboratorio: /geometria abre el laboratorio en la pestaña Geometría
+app.get('/geometria', verificarSesion, (req, res) => {
+  const parametros = new URLSearchParams({ ...req.query, pestana: 'geometria' });
+  res.redirect(`/laboratorio?${parametros}`);
+});
+
 // Solución de una pregunta: /solucion?pregunta=ID (pregunta a la izquierda, laboratorio a la derecha)
 app.get('/solucion', verificarSesion, (req, res) => {
   res.sendFile(path.join(frontendPath, 'priv/pages/solucion.html'));

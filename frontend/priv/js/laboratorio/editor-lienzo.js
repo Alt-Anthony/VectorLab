@@ -1,12 +1,16 @@
-// Laboratorio: arrastra piezas al lienzo cuadriculado, muévelas, rótalas, edítalas y simula.
-// Usa PIEZAS, VALORES, UNIDADES y dibujoDe (piezas.js) y crearSimulacion y detectarConexiones (simulacion.js).
-// Con ?pregunta=ID carga la figura de esa pregunta; con &modo=solucion solo muestra la figura (no se edita).
+// El lienzo del laboratorio: aquí se arrastran las piezas, se mueven, se rotan, se editan y se simula.
+// Las piezas vienen de dibujo-piezas.js y la física de motor-fisica.js.
+// La barra lateral tiene tres pestañas: Física, Circuitos (las piezas con grupo 'circuitos') y Geometría
+// (capa-geometria.js). Lo que solo se ve al simular (corriente, proyectiles) lo dibuja efectos-simulacion.js.
+// Si la dirección trae ?pregunta=ID se carga esa figura; con &modo=solucion solo se mira, no se edita.
+// Con ?pestana=geometria se abre directo en la pestaña Geometría.
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
 const CUADRICULA = 20;
 const PASO_ROTACION = 15;
-const ALTURA_SUELO = 40;        // distancia del suelo al borde inferior del lienzo
+const ALTURA_SUELO = 40;        // espacio que queda debajo del suelo
 const LARGO_MAXIMO_CUADROS = 40;
+const ANGULO_MAXIMO = 89;      // el lanzador apunta entre -89° y 89°
 const TEXTO_MAXIMO = 12;
 
 const parametrosUrl = new URLSearchParams(window.location.search);
@@ -19,11 +23,18 @@ const capaPiezas = $('capaPiezas');
 const capaConexiones = $('capaConexiones');
 const suelo = $('suelo');
 const listaRecursos = $('listaRecursos');
-const campos = { valor: $('campoValor'), texto: $('campoTexto'), largo: $('campoLargo'), nombre: $('campoNombre') };
+const campos = {
+    valor: $('campoValor'),
+    texto: $('campoTexto'),
+    largo: $('campoLargo'),
+    angulo: $('campoAngulo'),
+    nombre: $('campoNombre')
+};
 const entradas = {
     valor: $('inputValor'),
     texto: $('inputTexto'),
     largo: $('inputLargo'),
+    angulo: $('inputAngulo'),
     nombre: $('inputNombre'),
     unidad: $('selectorUnidad')
 };
@@ -32,19 +43,20 @@ const botones = {
     rotarIzquierda: $('btnRotarIzq'),
     rotarDerecha: $('btnRotarDer'),
     eliminar: $('btnEliminar'),
+    espejo: $('btnEspejo'),
     limpiar: $('btnLimpiar')
 };
 
-let piezas = [];          // [{ id, tipo, x, y, rotacion, valor, texto, largo, ref }]; valor en kg (masa) o N (fuerza)
-let seleccionada = null;  // id de la pieza seleccionada
-let arrastre = null;      // { id, dx, dy, esNueva }
-let simulacion = null;    // simulación en curso (crearSimulacion)
-let unidadActual = 'N';   // cómo se muestran los pesos: N, kg o kgf
+let piezas = [];          // las piezas del lienzo { id, tipo, x, y, rotacion, valor, texto, largo, ref }; peso en kg, fuerza en N
+let seleccionada = null;  // la pieza que está elegida ahora
+let arrastre = null;      // la pieza que se está arrastrando y desde dónde se agarró
+let simulacion = null;    // la simulación que está corriendo, si hay una
+let unidadActual = 'N';   // en qué unidad se ven los pesos: N, kg o kgf
 let sueloY = 0;
 let siguienteId = 1;
-let conectadosAntes = new Set(); // claves de los puntos que ya estaban unidos
+let conectadosAntes = new Set(); // los puntos que ya estaban unidos, para no hacer "pop" dos veces
 let audio = null;
-const nodos = new Map();  // id -> <g> de la pieza en el lienzo
+const nodos = new Map();  // el dibujo de cada pieza en el lienzo, buscado por su id
 
 const ajustarACuadricula = (valor) => Math.round(valor / CUADRICULA) * CUADRICULA;
 const buscarPieza = (id) => piezas.find((p) => p.id === id);
@@ -52,7 +64,7 @@ const piezaSeleccionada = () => (seleccionada === null ? null : buscarPieza(sele
 const redondear = (numero) => Number(numero.toFixed(3));
 const formatear = (numero) => Number(numero.toFixed(2)).toLocaleString('es-PE');
 
-// Convierte la posición del puntero en la pantalla a coordenadas del lienzo
+// Pasa la posición del mouse en la pantalla a una posición dentro del lienzo
 function puntoEnLienzo(evento) {
     const punto = new DOMPoint(evento.clientX, evento.clientY);
     return punto.matrixTransform(lienzo.getScreenCTM().inverse());
@@ -70,28 +82,32 @@ function dibujarSuelo() {
     suelo.querySelectorAll('rect').forEach((rect) => rect.setAttribute('width', width));
 }
 
-/* ---------- Unidades: por dentro kg y N, por fuera la unidad elegida ---------- */
+/* ---------- Unidades: se guarda en kg y N, se muestra en la que elijas ---------- */
 
 function conversion(pieza) {
     const regla = VALORES[pieza.tipo];
     return regla ? UNIDADES[unidadActual][regla.magnitud] : null;
 }
 
+// Sobre la pieza: "20 N", "2 kg", "30°" o, en un engranaje, solo el número de dientes
 function textoDeValor(pieza) {
     const c = conversion(pieza);
-    return c ? `${formatear(pieza.valor * c.factor)} ${c.simbolo}` : '';
+    return c ? `${c.prefijo ?? ''}${formatear(pieza.valor * c.factor)}${c.sufijo ?? ` ${c.simbolo}`}` : '';
 }
 
 /* ---------- Dibujo de las piezas ---------- */
 
-// estiramiento: solo lo usan las cuerdas al simular (largo actual / largo original)
+// estiramiento: cuánto se estiró la cuerda al simular (1 es su largo normal)
+// Lo que está en un grupo .sin-giro (el número del engranaje) se gira al revés para que siempre se lea derecho
 function ponerTransform(id, { x, y }, grados, estiramiento = 1) {
-    nodos.get(id).setAttribute('transform', `translate(${x} ${y}) rotate(${grados}) scale(1 ${estiramiento})`);
+    const nodo = nodos.get(id);
+    nodo.setAttribute('transform', `translate(${x} ${y}) rotate(${grados}) scale(1 ${estiramiento})`);
+    nodo.querySelector('.sin-giro')?.setAttribute('transform', `rotate(${-grados})`);
 }
 
 const actualizarNodo = (pieza) => ponerTransform(pieza.id, pieza, pieza.rotacion);
 
-// Los textos que escribe el usuario se ponen con textContent (nunca como HTML)
+// Lo que escribe el usuario se pone como texto simple, nunca como HTML, para que no se pueda meter código
 function rellenarTextos(pieza) {
     const nodo = nodos.get(pieza.id);
     const valor = nodo.querySelector('.valor');
@@ -107,9 +123,9 @@ function renderizarNodo(pieza) {
     actualizarNodo(pieza);
 }
 
-/* ---------- Conexiones: marcas verdes/rojas, pulso y sonido ---------- */
+/* ---------- Conexiones: punto verde si está unido, rojo si está suelto, con pulso y "pop" ---------- */
 
-// "Pop" corto generado con Web Audio (sin archivos de sonido)
+// El "pop" se genera en el momento con Web Audio, no hay ningún archivo de sonido
 function sonarPop() {
     audio = audio || new AudioContext();
     const ahora = audio.currentTime;
@@ -141,9 +157,10 @@ function dibujarConexiones(puntos, nuevas) {
     }));
 }
 
-// registrar: true al soltar una pieza (anima y suena lo que se acaba de unir); false mientras se arrastra.
-// sonar: false al cargar una escena (el navegador no deja sonar audio sin un clic del usuario).
+// registrar: al soltar una pieza se anima y suena lo que se acaba de unir; mientras se arrastra, no.
+// sonar: al cargar una figura no suena, porque el navegador no deja sonar nada antes de un clic.
 function actualizarConexiones({ registrar, sonar = registrar }) {
+    dibujarLineasDeCampo(piezas); // efectos-simulacion.js: las líneas de campo de las cargas siguen a las piezas
     const puntos = detectarConexiones({ piezas, ancho: lienzo.getBoundingClientRect().width, sueloY });
     const conectados = new Set(puntos.filter((p) => p.conectado).map((p) => p.clave));
     const nuevas = registrar ? new Set([...conectados].filter((clave) => !conectadosAntes.has(clave))) : new Set();
@@ -153,12 +170,16 @@ function actualizarConexiones({ registrar, sonar = registrar }) {
     conectadosAntes = conectados;
 }
 
-/* ---------- Cambios al estado (siempre crean objetos nuevos) ---------- */
+/* ---------- Cambios en las piezas (siempre se crea una copia nueva, no se toca la anterior) ---------- */
 
 function cambiarPieza(id, cambios) {
     piezas = piezas.map((p) => (p.id === id ? { ...p, ...cambios } : p));
     const pieza = buscarPieza(id);
-    if ('largo' in cambios) {
+    // La cota cambia con su largo; la rampa y el engranaje, con su valor (ángulo o dientes)
+    // Las piezas que se dibujan con una función (cota, rampa, engranaje, componentes...) cambian de dibujo
+    // con su largo, su valor, su ángulo o su giro (el texto de un componente parado va a un costado)
+    const dibujoCambia = typeof PIEZAS[pieza.tipo].svg === 'function' && ['largo', 'valor', 'angulo', 'rotacion', 'espejo'].some((campo) => campo in cambios);
+    if (dibujoCambia) {
         renderizarNodo(pieza);
     } else {
         actualizarNodo(pieza);
@@ -166,7 +187,7 @@ function cambiarPieza(id, cambios) {
     }
 }
 
-// Muestra en la barra superior los campos que tiene la pieza seleccionada
+// Muestra arriba solo los campos que tiene la pieza elegida (peso, texto, largo...)
 function mostrarCampos(pieza) {
     const c = pieza && conversion(pieza);
     campos.valor.hidden = !c;
@@ -179,6 +200,8 @@ function mostrarCampos(pieza) {
     if (!campos.texto.hidden) entradas.texto.value = pieza.texto;
     campos.largo.hidden = !pieza || pieza.largo === null;
     if (!campos.largo.hidden) entradas.largo.value = pieza.largo / CUADRICULA;
+    campos.angulo.hidden = !pieza || pieza.angulo === null;
+    if (!campos.angulo.hidden) entradas.angulo.value = pieza.angulo;
     campos.nombre.hidden = !pieza;
     if (pieza) entradas.nombre.value = pieza.ref || '';
 }
@@ -186,11 +209,13 @@ function mostrarCampos(pieza) {
 function seleccionar(id) {
     seleccionada = id;
     nodos.forEach((nodo, idNodo) => nodo.classList.toggle('activa', idNodo === id));
-    if (id !== null) capaPiezas.append(nodos.get(id)); // la seleccionada queda encima de las demás
+    if (id !== null) capaPiezas.append(nodos.get(id)); // la pieza elegida se pone encima de las demás
     const sinSeleccion = id === null;
     botones.rotarIzquierda.disabled = sinSeleccion;
     botones.rotarDerecha.disabled = sinSeleccion;
     botones.eliminar.disabled = sinSeleccion;
+    const elegida = piezaSeleccionada();
+    botones.espejo.disabled = !elegida || !PIEZAS[elegida.tipo].espejable;
     mostrarCampos(piezaSeleccionada());
 }
 
@@ -206,6 +231,8 @@ function agregarPieza(tipo, x, y, extra = {}) {
         valor: regla ? regla.inicial : null,
         texto: definicion.textoInicial ?? null,
         largo: definicion.largoInicial ?? null,
+        angulo: definicion.anguloInicial ?? null,
+        espejo: false,
         ref: null,
         ...extra
     };
@@ -229,15 +256,30 @@ function eliminarPieza(id) {
     actualizarConexiones({ registrar: true });
 }
 
-function rotarPieza(id, grados) {
+// sentido: 1 o -1. Cada pieza gira de a PASO_ROTACION, salvo las que dicen otro paso (los componentes, de a 90°)
+function rotarPieza(id, sentido) {
     const pieza = buscarPieza(id);
+    const grados = sentido * (PIEZAS[pieza.tipo].pasoRotacion ?? PASO_ROTACION);
     cambiarPieza(id, { rotacion: (pieza.rotacion + grados + 360) % 360 });
     actualizarConexiones({ registrar: true });
 }
 
+// Quita las piezas de física y también la geometría (capa-geometria.js)
 function limpiarTodo() {
-    if (piezas.length === 0 || !window.confirm('¿Quitar todas las piezas del lienzo?')) return;
+    const hayAlgo = piezas.length > 0 || hayGeometria();
+    if (!hayAlgo || !window.confirm('¿Quitar todo lo que hay en el lienzo?')) return;
     [...nodos.keys()].forEach(eliminarPieza);
+    limpiarGeometria();
+}
+
+/* ---------- Pestañas de la barra lateral ---------- */
+
+const PESTANAS = Object.freeze(['fisica', 'circuitos', 'geometria']);
+
+function mostrarPestana(nombre) {
+    const elegida = PESTANAS.includes(nombre) ? nombre : PESTANAS[0];
+    document.querySelectorAll('.pestana').forEach((boton) => boton.classList.toggle('activa', boton.dataset.pestana === elegida));
+    document.querySelectorAll('.lista-recursos').forEach((lista) => { lista.hidden = lista.dataset.pestana !== elegida; });
 }
 
 /* ---------- Campos de la barra superior ---------- */
@@ -249,7 +291,7 @@ function alCambiarValor() {
     if (!c || !Number.isFinite(mostrado)) return;
     const interno = mostrado / c.factor;
     const regla = VALORES[pieza.tipo];
-    if (interno < regla.min || interno > regla.max) return;
+    if (interno < regla.min || interno > regla.max || (regla.entero && !Number.isInteger(interno))) return;
     cambiarPieza(pieza.id, { valor: interno });
 }
 
@@ -265,7 +307,22 @@ function alCambiarLargo() {
     cambiarPieza(pieza.id, { largo: cuadros * CUADRICULA });
 }
 
-// Nombre de la pieza (ref) para que los pasos de la solución puedan resaltarla. Solo letras, números y _
+// Voltea la pieza (solo las que se pueden poner en espejo: la rampa y la pista curva)
+function voltearPieza() {
+    const pieza = piezaSeleccionada();
+    if (!pieza || !PIEZAS[pieza.tipo].espejable) return;
+    cambiarPieza(pieza.id, { espejo: !pieza.espejo });
+    actualizarConexiones({ registrar: true });
+}
+
+function alCambiarAngulo() {
+    const pieza = piezaSeleccionada();
+    const grados = Number(entradas.angulo.value);
+    if (!pieza || pieza.angulo === null || !Number.isFinite(grados) || Math.abs(grados) > ANGULO_MAXIMO) return;
+    cambiarPieza(pieza.id, { angulo: grados });
+}
+
+// Nombre de la pieza (por ejemplo "barra") para que la solución paso a paso la pueda marcar. Solo letras, números y _
 function alCambiarNombre() {
     const pieza = piezaSeleccionada();
     const nombre = entradas.nombre.value.trim();
@@ -296,7 +353,10 @@ function iniciarSimulacion() {
         piezas,
         ancho: lienzo.getBoundingClientRect().width,
         sueloY,
-        alDibujar: ponerTransform
+        alDibujar: ponerTransform,
+        alResolverCircuito: mostrarCircuito,
+        alMoverProyectiles: moverProyectiles,
+        alMoverCuerdas: moverCuerdasDePolea
     });
     reflejarSimulacion();
 }
@@ -305,13 +365,14 @@ function detenerSimulacion() {
     if (!simulacion) return;
     simulacion.detener();
     simulacion = null;
-    piezas.forEach(actualizarNodo); // todo vuelve a donde estaba
+    piezas.forEach(actualizarNodo); // al detener, todo vuelve a su lugar
+    limpiarEfectos();
     reflejarSimulacion();
 }
 
 const alternarSimulacion = () => (simulacion ? detenerSimulacion() : iniciarSimulacion());
 
-// En modo solución, si la pregunta tiene pasos, el botón principal empieza la resolución paso a paso (pasos.js)
+// En la solución, el botón "Empezar" arranca el paso a paso (solucion-pasos.js); en el editor, simula
 function alPresionarBotonPrincipal() {
     if (MODO_SOLUCION && hayPasos()) {
         empezarPasos();
@@ -351,7 +412,7 @@ function alMoverPuntero(evento) {
 
 function alSoltarPuntero(evento) {
     if (!arrastre) return;
-    // Una pieza nueva que se suelta fuera del lienzo no se agrega
+    // Si sueltas una pieza nueva fuera del lienzo, no se agrega
     if (arrastre.esNueva && !estaSobreElLienzo(evento)) eliminarPieza(arrastre.id);
     arrastre = null;
     document.body.classList.remove('arrastrando');
@@ -366,7 +427,7 @@ function alPresionarTecla(evento) {
         evento.preventDefault();
         eliminarPieza(seleccionada);
     } else if (evento.key.toLowerCase() === 'r' && !evento.metaKey && !evento.ctrlKey) {
-        rotarPieza(seleccionada, evento.shiftKey ? -PASO_ROTACION : PASO_ROTACION);
+        rotarPieza(seleccionada, evento.shiftKey ? -1 : 1);
     } else if (evento.key === 'Escape') {
         seleccionar(null);
     }
@@ -375,7 +436,8 @@ function alPresionarTecla(evento) {
 /* ---------- Inicio ---------- */
 
 function crearRecurso([tipo, definicion]) {
-    const { svg, zona: [x, y, ancho, alto] } = dibujoDe({ tipo, largo: definicion.largoInicial });
+    const muestra = { tipo, rotacion: 0, largo: definicion.largoInicial, valor: VALORES[tipo]?.inicial, angulo: definicion.anguloInicial };
+    const { svg, zona: [x, y, ancho, alto] } = dibujoDe(muestra);
     const recurso = document.createElement('div');
     recurso.className = 'recurso';
     recurso.title = `Arrastra: ${definicion.nombre}`;
@@ -390,23 +452,29 @@ function crearRecurso([tipo, definicion]) {
 function iniciar() {
     document.body.classList.toggle('modo-solucion', MODO_SOLUCION);
     botones.simular.textContent = TEXTO_INICIAR;
-    listaRecursos.replaceChildren(...Object.entries(PIEZAS).map(crearRecurso));
+    const recursosDe = (grupo) => Object.entries(PIEZAS).filter(([, definicion]) => (definicion.grupo || 'fisica') === grupo).map(crearRecurso);
+    listaRecursos.replaceChildren(...recursosDe('fisica'));
+    $('listaCircuitos').replaceChildren(...recursosDe('circuitos'));
     dibujarSuelo();
     window.addEventListener('resize', dibujarSuelo);
-    lienzo.addEventListener('pointerdown', () => { if (!simulacion) seleccionar(null); }); // clic en zona vacía
+    lienzo.addEventListener('pointerdown', () => { if (!simulacion) seleccionar(null); }); // clic en una zona vacía: se quita la selección
     window.addEventListener('pointermove', alMoverPuntero);
     window.addEventListener('pointerup', alSoltarPuntero);
     document.addEventListener('keydown', alPresionarTecla);
     entradas.valor.addEventListener('input', alCambiarValor);
     entradas.texto.addEventListener('input', alCambiarTexto);
     entradas.largo.addEventListener('input', alCambiarLargo);
+    entradas.angulo.addEventListener('input', alCambiarAngulo);
     entradas.nombre.addEventListener('input', alCambiarNombre);
     entradas.unidad.addEventListener('change', alCambiarUnidad);
     botones.simular.addEventListener('click', alPresionarBotonPrincipal);
-    botones.rotarIzquierda.addEventListener('click', () => rotarPieza(seleccionada, -PASO_ROTACION));
-    botones.rotarDerecha.addEventListener('click', () => rotarPieza(seleccionada, PASO_ROTACION));
-    botones.eliminar.addEventListener('click', () => eliminarPieza(seleccionada));
+    botones.rotarIzquierda.addEventListener('click', () => rotarPieza(seleccionada, -1));
+    botones.rotarDerecha.addEventListener('click', () => rotarPieza(seleccionada, 1));
+    botones.eliminar.addEventListener('click', () => { if (seleccionada !== null) eliminarPieza(seleccionada); });
     botones.limpiar.addEventListener('click', limpiarTodo);
+    botones.espejo.addEventListener('click', voltearPieza);
+    document.querySelectorAll('.pestana').forEach((boton) => boton.addEventListener('click', () => mostrarPestana(boton.dataset.pestana)));
+    mostrarPestana(parametrosUrl.get('pestana'));
     seleccionar(null);
 }
 
