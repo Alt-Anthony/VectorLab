@@ -1,11 +1,16 @@
-// Resolución paso a paso (modo solución).
-// Cada paso puede resaltar piezas (cuadros rojos), dibujar flechas de fuerza y cotas, y simular.
-// La explicación de cada paso la muestra la página de la solución (ventana padre) al recibir un mensaje.
-// Usa de editor-lienzo.js: $, SVG_NS, lienzo, piezas, iniciarSimulacion, detenerSimulacion y botones;
-// de cargar-figura.js: desplazamientoEscena; de dibujo-piezas.js: dibujoDe y dibujarCota; de api.js: renderizarFormulas.
+// La solución paso a paso, como si se resolviera en la pizarra. La usan los dos laboratorios (física y geometría).
+// En cada paso se marcan piezas en rojo, se dibujan flechas y medidas, y a veces se simula (o se mide).
+// Cada paso le avisa a la página de la solución en qué paso vamos (en el último marca la alternativa correcta).
+// Cada laboratorio le presta su figura con el objeto figuraParaPasos:
+//   marco()          → { izquierda, derecha, arriba, abajo }: lo que ocupa la figura en el lienzo
+//   resaltar(ref)    → el dibujo rojo que marca esa pieza u objeto (o null si no existe)
+//   aLienzo(x, y)    → pasa una posición guardada con la figura a su lugar en el lienzo
+//   simular(activo)  → arranca o detiene la simulación (en geometría: muestra las medidas)
+//   mostrar(ids)     → (opcional) hace aparecer los objetos ocultos que ya mostró algún paso
+// Además usa $, SVG_NS y lienzo del laboratorio, dibujarCota de cota.js y renderizarFormulas de api.js.
 
 const LARGO_FLECHA = 60;
-const ANCHO_TEXTO = 280;      // ancho de la explicación y de la columna de fórmulas
+const ANCHO_TEXTO = 280;      // ancho del texto de la explicación y de las fórmulas
 const ALTO_TEXTO = 280;
 const ALTO_FORMULA = 36;
 const SEPARACION = 28;        // espacio entre la figura y el texto
@@ -17,7 +22,7 @@ const contadorPaso = $('contadorPaso');
 
 let pasos = [];
 let indicePaso = -1;
-let marco = null; // rectángulo que ocupa la figura en el lienzo: { izquierda, derecha, arriba, abajo }
+let marco = null; // el espacio que ocupa la figura, para escribir alrededor sin taparla: { izquierda, derecha, arriba, abajo }
 
 function prepararPasos(lista) {
     pasos = Array.isArray(lista) ? lista.filter((p) => p && typeof p.titulo === 'string') : [];
@@ -37,21 +42,12 @@ function crearTspan(texto, atributos) {
     return tspan;
 }
 
-// Las coordenadas de los pasos están en el mismo sistema que la escena guardada
-const aLienzo = (x, y) => ({ x: x + desplazamientoEscena.dx, y: y + desplazamientoEscena.dy });
+// Las posiciones de los pasos se miden igual que la figura guardada; aquí se pasan al lienzo
+const aLienzo = (x, y) => figuraParaPasos.aLienzo(x, y);
 
 /* ---------- Anotaciones ---------- */
 
-function resaltarPieza(ref) {
-    const pieza = piezas.find((p) => p.ref === ref);
-    if (!pieza) return null;
-    const { zona: [x, y, ancho, alto] } = dibujoDe(pieza);
-    const grupo = crearSvg('g', { transform: `translate(${pieza.x} ${pieza.y}) rotate(${pieza.rotacion})` });
-    grupo.append(crearSvg('rect', { x: x - 6, y: y - 6, width: ancho + 12, height: alto + 12, rx: 6, class: 'resaltado' }));
-    return grupo;
-}
-
-// Texto como "T" + subíndice "B" + " = 40 N"
+// El texto de la flecha, por ejemplo T con subíndice B y luego " = 40 N"
 function crearEtiquetaFlecha(punta, { texto, sub, despues, lado }) {
     const izquierda = lado === 'izquierda';
     const etiqueta = crearSvg('text', {
@@ -87,25 +83,12 @@ function crearCotaPaso({ x, y, largo, texto }) {
     if (![x, y, largo].every(Number.isFinite)) return null;
     const posicion = aLienzo(x, y);
     const grupo = crearSvg('g', { class: 'cota-paso', transform: `translate(${posicion.x} ${posicion.y})` });
-    grupo.innerHTML = dibujarCota({ largo }); // marcado fijo; el texto se pone con textContent
+    grupo.innerHTML = dibujarCota({ largo }); // el dibujo de la cota es fijo; la medida se escribe aparte como texto
     grupo.querySelector('.texto').textContent = String(texto ?? '');
     return grupo;
 }
 
-/* ---------- Texto y fórmulas dibujados en los espacios vacíos del lienzo ---------- */
-
-function calcularMarco() {
-    const cajas = piezas.map((p) => {
-        const { zona: [x, y, ancho, alto] } = dibujoDe(p);
-        return { x1: p.x + x, y1: p.y + y, x2: p.x + x + ancho, y2: p.y + y + alto };
-    });
-    return {
-        izquierda: Math.min(...cajas.map((c) => c.x1)),
-        derecha: Math.max(...cajas.map((c) => c.x2)),
-        arriba: Math.min(...cajas.map((c) => c.y1)),
-        abajo: Math.max(...cajas.map((c) => c.y2))
-    };
-}
+/* ---------- Explicación y fórmulas escritas en los espacios vacíos, como en una pizarra ---------- */
 
 // La explicación va a la izquierda de la figura; si no cabe, debajo
 function posicionTexto() {
@@ -120,7 +103,7 @@ function posicionFormulas() {
     return cabe ? { x, y: marco.arriba } : { x: marco.izquierda, y: marco.abajo + SEPARACION + ALTO_TEXTO / 2 };
 }
 
-// HTML dentro del SVG (foreignObject) para poder usar texto con saltos de línea y KaTeX
+// Para escribir texto con saltos de línea y fórmulas dentro del dibujo se mete HTML en el SVG (foreignObject)
 function crearHtmlEnSvg({ x, y }, ancho, alto, clase) {
     const objeto = crearSvg('foreignObject', { x, y, width: ancho, height: alto, class: 'html-en-svg' });
     const div = document.createElement('div');
@@ -146,7 +129,7 @@ function escribirFormula(div, latex) {
     }
 }
 
-// Fórmulas acumuladas: las de pasos anteriores en gris, las del paso actual en rojo
+// Las fórmulas se van acumulando: las de pasos anteriores en gris y las del paso actual en rojo
 function crearFormulas() {
     const inicio = posicionFormulas();
     const lista = pasos.slice(0, indicePaso + 1).flatMap((paso, i) =>
@@ -163,7 +146,7 @@ function crearFormulas() {
 
 function dibujarAnotaciones(paso) {
     const elementos = [
-        ...(paso.resaltar || []).map(resaltarPieza),
+        ...(paso.resaltar || []).map((ref) => figuraParaPasos.resaltar(ref)),
         ...(paso.cotas || []).map(crearCotaPaso),
         ...(paso.flechas || []).map(crearFlecha),
         crearTextoPaso(paso),
@@ -185,23 +168,24 @@ function avisarALaSolucion(paso) {
     window.parent.postMessage({ tipo: 'paso', indice: indicePaso, total: pasos.length, paso }, window.location.origin);
 }
 
+// Lo que mostró un paso sigue visible en los siguientes (por ejemplo, un ángulo que ya se marcó)
+const mostradosHasta = (indice) =>
+    pasos.slice(0, indice + 1).flatMap((paso) => (Array.isArray(paso.mostrar) ? paso.mostrar.map(String) : []));
+
 function irAPaso(indice) {
     if (indice < 0 || indice >= pasos.length) return;
     indicePaso = indice;
     const paso = pasos[indice];
-    if (paso.simular) {
-        iniciarSimulacion();
-    } else {
-        detenerSimulacion();
-    }
+    figuraParaPasos.mostrar?.(mostradosHasta(indice));
+    figuraParaPasos.simular(Boolean(paso.simular));
     dibujarAnotaciones(paso);
     actualizarControles();
     avisarALaSolucion(paso);
 }
 
 function empezarPasos() {
-    marco = calcularMarco();
-    botones.simular.hidden = true;
+    marco = figuraParaPasos.marco();
+    $('btnSimular').hidden = true;
     controlesPasos.hidden = false;
     irAPaso(0);
 }

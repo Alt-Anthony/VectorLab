@@ -66,7 +66,8 @@ exports.buscarPregunta = async (id) => {
 // Preguntas de un curso y tema, cada una con sus alternativas
 exports.listarPreguntas = async (cursoId, temaId) => {
     const preguntas = await pool.query(
-        `SELECT id, codigo_banco, enunciado, imagen, fuente, resolucion
+        `SELECT id, codigo_banco, enunciado, imagen, fuente, resolucion,
+                (escena IS NOT NULL) AS tiene_solucion
          FROM preguntas
          WHERE curso_id = $1 AND tema_id = $2
          ORDER BY id`,

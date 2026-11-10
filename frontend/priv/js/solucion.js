@@ -58,9 +58,10 @@ async function iniciar() {
         return;
     }
 
-    document.getElementById('laboratorio').src = `/laboratorio?pregunta=${idPregunta}&modo=solucion`;
     try {
-        mostrarPregunta(await pedirDatos(`/api/preguntas/${idPregunta}`));
+        const pregunta = await pedirDatos(`/api/preguntas/${idPregunta}`);
+        document.getElementById('laboratorio').src = `/laboratorio?pregunta=${idPregunta}&modo=solucion`;
+        mostrarPregunta(pregunta);
     } catch (error) {
         mostrarError(contenedor, error);
     }
