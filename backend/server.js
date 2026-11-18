@@ -4,7 +4,7 @@ const path = require('path');
 const express = require('express');
 const session = require('express-session');
 const pool = require('./db');
-const { verificarSesion } = require('./middlewares/authMiddleware');
+const { verificarSesion, esAdmin } = require('./middlewares/authMiddleware');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -74,6 +74,10 @@ app.use('/api', (req, res) => {
 
 // Frontend: /priv 
 const frontendPath = path.join(__dirname, '../frontend');
+
+app.get('/priv/pages/estudiantes.html', verificarSesion, esAdmin, (req, res) => {
+  res.sendFile(path.join(frontendPath, 'priv/pages/estudiantes.html'));
+});
 app.use('/priv', verificarSesion, express.static(path.join(frontendPath, 'priv')));
 
 // Laboratorio con dirección corta: /laboratorio

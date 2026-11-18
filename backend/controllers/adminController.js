@@ -1,5 +1,5 @@
 const bcrypt = require('bcrypt');
-const { crearAdmin, obtenerEstudiantes, eliminarEstudiantePorId } = require('../data/users');
+const { crearAdmin, obtenerEstudiantes, obtenerAdministradores, eliminarEstudiantePorId } = require('../data/users');
 
 exports.listarEstudiantes = async (req, res) => {
     try {
@@ -7,6 +7,16 @@ exports.listarEstudiantes = async (req, res) => {
         res.status(200).json({ status: 'success', data: estudiantes });
     } catch (error) {
         res.status(500).json({ status: 'fail', message: 'Error al obtener estudiantes' });
+    }
+};
+
+exports.listarAdministradores = async (req, res) => {
+    try {
+        const administradores = await obtenerAdministradores();
+        res.status(200).json({ status: 'success', data: administradores });
+    } catch (error) {
+        console.error('Error en listar', error);
+        res.status(500).json({ status: 'fail', message: 'Error al obtener administradores' });
     }
 };
 
@@ -30,10 +40,10 @@ exports.eliminarEstudiante = async (req, res) => {
 
 exports.registrarAdmin = async (req, res) => {
     const { nombre, email, password } = req.body;
-
+    const creadorId = req.session.usuario.id;
     try {
         const passwordHash = await bcrypt.hash(password, 10);
-        const nuevoAdmin = await crearAdmin(nombre, email, passwordHash);
+        const nuevoAdmin = await crearAdmin(nombre, email, passwordHash, creadorId);
 
         res.status(201).json({ status: 'success', message: 'Administrador creado correctamente', data: nuevoAdmin });
     } catch (error) {
