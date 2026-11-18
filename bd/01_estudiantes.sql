@@ -6,12 +6,8 @@ CREATE TABLE IF NOT EXISTS usuarios (
     email VARCHAR(150) UNIQUE NOT NULL,
     password_hash VARCHAR(255) NOT NULL,
     rol VARCHAR(20) CHECK (rol IN ('admin', 'estudiante')) DEFAULT 'estudiante',
-    fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    creado_por INTEGER REFERENCES usuarios(id) ON DELETE SET NULL
+    fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
-ALTER TABLE usuarios
-ADD COLUMN IF NOT EXISTS creado_por INTEGER REFERENCES usuarios(id) ON DELETE SET NULL;
-
 
 --datos de prueba
 --contraseña

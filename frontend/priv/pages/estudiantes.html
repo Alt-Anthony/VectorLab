@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Gestión de Usuarios - VectorLab</title>
+  <title>Gestión de Estudiantes - VectorLab</title>
   <link rel="stylesheet" href="../../pub/css/tema.css">
 </head>
 
@@ -34,56 +34,25 @@
       </form>
     </section>
 
-    <section class="card card-tabla">
+    <section class="card">
       <div class="table-header">
         <h2>Lista de estudiantes</h2>
-        <div class="acciones-tabla">
-          <button type="button" id="btnActualizarEstudiantes" onclick="cargarEstudiantes()" hidden>Actualizar</button>
-          <button type="button" id="btnToggleEstudiantes" class="boton-secundario" onclick="alternarListaEstudiantes()">
-            Ver estudiantes
-          </button>
-
-        </div>
-
-        <div id="contenedorTablaEstudiantes" class="table-container">
-          <table>
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Nombre</th>
-                <th>Email</th>
-                <th>Carrera a la que postula</th>
-                <th>Creado</th>
-                <th>Creado por</th>
-                <th>Acciones</th>
-              </tr>
-            </thead>
-            <tbody id="listaEstudiantes"></tbody>
-          </table>
-        </div>
-    </section>
-    <section class="card card-tabla">
-      <div class="table-header">
-        <h2>Lista de administradores</h2>
-        <div class="acciones-tabla">
-          <button type="button" id="btnActualizarAdmins" onclick="cargarAdministradores()" hidden>Actualizar</button>
-          <button type="button" id="btnToggleAdmins" class="boton-secundario" onclick="alternarListaAdmins()">Ver
-            Administradores</button>
-
-        </div>
+        <button type="button" onclick="cargarEstudiantes()">Actualizar</button>
       </div>
 
-      <div id="contenedorTablaAdmins" class="table-container" hidden>
+      <div class="table-container">
         <table>
           <thead>
             <tr>
+              <th>ID</th>
               <th>Nombre</th>
-              <th>Correo</th>
-              <th>Fecha de creación</th>
-              <th>Creado por</th>
+              <th>Email</th>
+              <th>Carrera a la que postula</th>
+              <th>Creado</th>
+              <th>Acciones</th>
             </tr>
           </thead>
-          <tbody id="listaAdministradores"></tbody>
+          <tbody id="listaEstudiantes"></tbody>
         </table>
       </div>
     </section>
