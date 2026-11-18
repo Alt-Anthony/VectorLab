@@ -387,3 +387,52 @@ th {
 .respuesta p {
   margin: 10px 0 0;
 }
+
+[hidden] {
+  display: none !important;
+}
+
+.card.card-tabla {
+  display: block;
+  width: 100%;
+}
+
+.card.card-tabla .table-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  width: 100%;
+}
+
+.card.card-tabla .table-header h2 {
+  margin: 0;
+}
+
+.card.card-tabla .table-container {
+  width: 100%;
+  margin-top: 16px;
+  overflow-x: auto;
+}
+
+.card.card-tabla table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.acciones-tabla {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.boton-secundario {
+  background: transparent;
+  border: 1px solid var(--acento);
+  color: var(--texto);
+}
+
+.boton-secundario:hover {
+  background: rgba(124, 58, 237, 0.2);
+}
