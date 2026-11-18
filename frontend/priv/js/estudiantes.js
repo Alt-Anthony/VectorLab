@@ -1,3 +1,4 @@
+
 // Listar estudiantes en el panel admin
 async function cargarEstudiantes() {
     try {
@@ -10,13 +11,12 @@ async function cargarEstudiantes() {
         }
 
         const response = await res.json();
-        const estudiantes = response.data;
-
         const contenedor = document.getElementById('listaEstudiantes');
         if (!contenedor) return;
 
+        const estudiantes = response.data || [];
         if (estudiantes.length === 0) {
-            contenedor.innerHTML = '<tr><td colspan="6">No hay estudiantes registrados</td></tr>';
+            contenedor.innerHTML = '<tr><td colspan="7">No hay estudiantes registrados</td></tr>';
             return;
         }
         contenedor.innerHTML = estudiantes.map(est => `
@@ -25,7 +25,8 @@ async function cargarEstudiantes() {
                 <td>${est.nombre}</td>
                 <td>${est.email}</td>
                 <td>${est.carrera || 'N/A'}</td>
-                <td>${est.fecha_creacion ? new Date(est.fecha_creacion).toLocaleDateString():'N/A'}</td>
+                <td>${est.fecha_creacion ? new Date(est.fecha_creacion).toLocaleDateString('es-PE') : 'N/A'}</td>
+                <td>${est.creado_por || 'Autoregistro'}</td>
                 <td>
                     <button onclick="eliminarEstudiante(${est.id})">Eliminar</button>
                 </td>
@@ -33,6 +34,83 @@ async function cargarEstudiantes() {
         `).join('');
     } catch (error) {
         console.error('Error al cargar la lista de estudiantes:', error);
+    }
+}
+
+// Listar administradores en el panel admin
+async function cargarAdministradores() {
+    try {
+        const res = await fetch('/api/estudiantes/administradores');
+
+        if (res.status === 403) {
+            alert('Acceso denegado: Se requieren permisos de Administrador.');
+            window.location.href = 'dashboard.html';
+            return;
+        }
+
+        const response = await res.json();
+        const contenedor = document.getElementById('listaAdministradores');
+        if (!contenedor) return;
+
+        const administradores = response.data || [];
+
+        if (administradores.length === 0) {
+            contenedor.innerHTML = '<tr><td colspan="4">No hay administradores registrados</td></tr>';
+            return;
+        }
+
+        contenedor.innerHTML = administradores.map(admin => {
+            const fecha = admin.fecha_creacion
+                ? new Date(admin.fecha_creacion).toLocaleDateString('es-PE')
+                : 'N/A';
+            const creadoPor = admin.creado_por_nombre
+                ? `${admin.creado_por_nombre} (${admin.creado_por_email})`
+                : 'Sistema (Inicial)';
+
+            return `
+                <tr>
+                    <td>${admin.nombre}</td>
+                    <td>${admin.email}</td>
+                    <td>${fecha}</td>
+                    <td>${creadoPor}</td>
+                </tr>
+            `;
+        }).join('');
+    } catch (error) {
+        console.error('Error al cargar la lista de administradores:', error);
+    }
+}
+
+// Mostrar u ocultar la tabla de estudiantes
+function alternarListaEstudiantes() {
+    const tablaContenedor = document.getElementById('contenedorTablaEstudiantes');
+    const botonToggle = document.getElementById('btnToggleEstudiantes');
+    const botonActualizar = document.getElementById('btnActualizarEstudiantes');
+    if (!tablaContenedor || !botonToggle) return;
+
+    const estaOculta = tablaContenedor.hidden;
+    tablaContenedor.hidden = !estaOculta;
+    if (botonActualizar) botonActualizar.hidden = !estaOculta;
+    botonToggle.textContent = estaOculta ? 'Ocultar Estudiantes' : 'Ver Estudiantes';
+
+    if (estaOculta) {
+        cargarEstudiantes();
+    }
+}
+
+// Mostrar u ocultar la tabla de administradores
+function alternarListaAdmins() {
+    const tablaContenedor = document.getElementById('contenedorTablaAdmins');
+    const botonToggle = document.getElementById('btnToggleAdmins');
+    const botonActualizar = document.getElementById('btnActualizarAdmins');
+    if (!tablaContenedor || !botonToggle) return;
+
+    const estaOculta = tablaContenedor.hidden;
+    tablaContenedor.hidden = !estaOculta;
+    if (botonActualizar) botonActualizar.hidden = !estaOculta;
+    botonToggle.textContent = estaOculta ? 'Ocultar Administradores' : 'Ver Administradores';
+    if (estaOculta) {
+        cargarAdministradores();
     }
 }
 

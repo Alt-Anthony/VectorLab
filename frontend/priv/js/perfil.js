@@ -13,6 +13,7 @@ async function cargarPerfil() {
         const usuario = response.data;
 
         // Renderizar datos en los elementos HTML del DOM
+        document.getElementById('usuarioId').textContent = usuario.id;
         document.getElementById('usuarioNombre').textContent = usuario.nombre;
         document.getElementById('usuarioCarrera').textContent = usuario.carrera;
         document.getElementById('usuarioEmail').textContent = usuario.email;
