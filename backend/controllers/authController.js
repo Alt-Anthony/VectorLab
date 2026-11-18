@@ -4,8 +4,17 @@ const { buscarPorEmail, crearEstudiante } = require('../data/users');
 exports.registrarEstudiante = async (req, res) => {
     const { nombre, carrera, email, password } = req.body;
 
+    if (!nombre?.trim()) {
+        return res.status(400).json({ status: 'fail', message: 'El nombre es obligatorio' });
+    }
     if (!carrera?.trim()) {
         return res.status(400).json({ status: 'fail', message: 'La carrera es obligatoria' });
+    }
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
+        return res.status(400).json({ status: 'fail', message: 'Ingresa un correo electrónico válido' });
+    }
+    if (!password || password.length < 8) {
+        return res.status(400).json({ status: 'fail', message: 'La contraseña debe tener al menos 8 caracteres' });
     }
 
     try {
