@@ -67,6 +67,7 @@ app.use('/api/perfil', require('./routes/perfil'));
 app.use('/api/estudiantes', require('./routes/estudiantes'));
 app.use('/api/cursos', require('./routes/cursos'));
 app.use('/api/preguntas', require('./routes/preguntas'));
+app.use('/api/panel', require('./routes/panelEstudiante'));
 //Ruta para manejo de peticiones de API no encontradas
 app.use('/api', (req, res) => {
   res.status(404).json({ status: 'fail', message: 'Endpoint no encontrado' });

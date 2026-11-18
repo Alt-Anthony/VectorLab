@@ -57,7 +57,44 @@
                 <button type="submit" class="boton-submit">Guardar Cambios</button>
             </form>
 
+                </section>
 
+        <section class="card">
+            <h2>Mi progreso</h2>
+            <p id="textoProgreso" class="texto-suave">Cargando...</p>
+            <progress id="barraProgreso" value="0" max="100"></progress>
+            <div id="progresoCursos"></div>
+        </section>
+
+        <section class="card">
+            <h2>Mis preguntas resueltas</h2>
+            <p id="textoHistorial" class="texto-suave">Cargando...</p>
+            <table id="tablaHistorial" hidden>
+                <thead>
+                    <tr><th>Pregunta</th><th>Curso</th><th>Tema</th><th>Tu respuesta</th><th>Resultado</th><th>Fecha</th></tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </section>
+
+        <section class="card">
+            <h3>Cambiar contraseña</h3>
+            <form id="formPassword">
+                <div class="grupo-campo">
+                    <label for="passActual">Contraseña actual:</label>
+                    <input type="password" id="passActual" required>
+                </div>
+                <div class="grupo-campo">
+                    <label for="passNueva">Nueva contraseña (mínimo 8 caracteres):</label>
+                    <input type="password" id="passNueva" required>
+                </div>
+                <div class="grupo-campo">
+                    <label for="passConfirmar">Repite la nueva contraseña:</label>
+                    <input type="password" id="passConfirmar" required>
+                </div>
+                <button type="submit" class="boton-submit">Cambiar contraseña</button>
+            </form>
+            <p id="mensajePassword" class="texto-suave"></p>
         </section>
     </main>
 
@@ -65,6 +102,7 @@
     <script src="../js/cursos.js"></script>
     <script src="../js/perfil.js"></script>
     <script src="../js/logout.js"></script>
+    <script src="../js/panelEstudiante.js"></script>
 </body>
 
 </html>
